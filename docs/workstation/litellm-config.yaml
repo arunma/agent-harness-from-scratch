@@ -1,0 +1,30 @@
+# LiteLLM proxy on the Mac: one endpoint (http://localhost:4000) for every model.
+# Run: litellm --config litellm-config.yaml --port 4000
+model_list:
+  - model_name: claude-sonnet
+    litellm_params:
+      model: anthropic/claude-sonnet-5
+      api_key: os.environ/ANTHROPIC_API_KEY
+
+  - model_name: claude-haiku
+    litellm_params:
+      model: anthropic/claude-haiku-4-5-20251001
+      api_key: os.environ/ANTHROPIC_API_KEY
+
+  - model_name: local-qwen            # vLLM on the 5090
+    litellm_params:
+      model: hosted_vllm/qwen3-8b
+      api_base: http://workstation:8000/v1
+      api_key: os.environ/VLLM_API_KEY
+
+  - model_name: local-embed
+    litellm_params:
+      model: hosted_vllm/qwen3-embed
+      api_base: http://workstation:8001/v1
+      api_key: os.environ/VLLM_API_KEY
+
+  - model_name: lmstudio              # LM Studio on the Mac (MLX / llama.cpp)
+    litellm_params:
+      model: openai/your-loaded-model-id   # copy the id from GET http://localhost:1234/v1/models
+      api_base: http://localhost:1234/v1
+      api_key: lm-studio

@@ -1,0 +1,69 @@
+[project]
+name = "agent-sprint"
+version = "0.1.0"
+description = "Three-week hands-on sprint: agent harness, production RAG, MCP, evals, and governance for a synthetic digital bank."
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "anthropic",
+    "httpx",
+    "openai",            # OpenAI-compatible client for vLLM, LM Studio and LiteLLM
+    "pydantic>=2",
+    "python-dotenv",
+    "rich",
+    "typer",
+]
+
+[dependency-groups]
+dev = ["pytest", "ruff", "ipykernel"]
+
+# Install progressively as the sprint reaches each day:  uv sync --group <name>
+w1-tokens = ["transformers", "tokenizers", "jinja2"]                     # Day 1
+w1-structured = ["instructor"]                                          # Day 2
+w1-guardrails = ["nemoguardrails"]                                      # Day 3
+w1-tracing = [                                                          # Day 5
+    "langfuse",
+    "langsmith",
+    "opentelemetry-sdk",
+    "opentelemetry-exporter-otlp",
+]
+w2-rag = [                                                              # Days 6-7
+    "docling",
+    "opensearch-py",
+    "qdrant-client",
+    "psycopg[binary]",
+    "pgvector",
+    "tiktoken",
+    "voyageai",
+    "cohere",
+    "presidio-analyzer",
+    "presidio-anonymizer",
+    "ragas",
+]
+w2-mcp = ["mcp", "fastmcp", "starlette", "uvicorn"]                     # Days 8-9
+w2-memory = ["mem0ai", "graphiti-core", "letta-client", "langmem"]      # Day 10
+w3-evals = ["inspect-ai"]                                               # Day 11
+w3-frameworks = [                                                       # Day 12
+    "langgraph",
+    "claude-agent-sdk",
+    "openai-agents",
+    "pydantic-ai-slim[anthropic,openai]",
+]
+w3-security = ["agentdojo"]                                             # Day 14
+
+[tool.uv]
+default-groups = ["dev"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agent_sprint"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

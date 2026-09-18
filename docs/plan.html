@@ -1,0 +1,1111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent Engineering Sprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Literata:opsz,wght@7..72,500;7..72,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper:#F4F6F3; --sheet:#FFFFFF; --ink:#1E2A32; --muted:#5A6670; --rule:#D8DDD6;
+  --read:#2E6A8A; --build:#94560F; --adopt:#6B4C96; --code:#3C7A5A; --evening:#7B8189; --write:#5A6670;
+  --tint-read:#EEF4F7; --tint-build:#FAF3EA; --tint-adopt:#F3EFF8; --tint-code:#EDF5F0; --tint-evening:#F4F5F6; --tint-write:#F2F4F5;
+  --link:#1F5F86; --focus:#1F5F86;
+  --serif:"Literata", Georgia, "Times New Roman", serif;
+  --sans:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:#161B1F; --sheet:#1D2328; --ink:#E4E8E6; --muted:#9AA5AD; --rule:#333C43;
+    --read:#79B3D3; --build:#E0A35C; --adopt:#B59BE0; --code:#7FC3A0; --evening:#9AA1A8; --write:#AEB7BE;
+    --tint-read:#1C2A33; --tint-build:#2C241B; --tint-adopt:#262233; --tint-code:#1B2A23; --tint-evening:#22272B; --tint-write:#22282C;
+    --link:#8CC4E4; --focus:#8CC4E4;
+  }
+}
+:root[data-theme="dark"] {
+    --paper:#161B1F; --sheet:#1D2328; --ink:#E4E8E6; --muted:#9AA5AD; --rule:#333C43;
+    --read:#79B3D3; --build:#E0A35C; --adopt:#B59BE0; --code:#7FC3A0; --evening:#9AA1A8; --write:#AEB7BE;
+    --tint-read:#1C2A33; --tint-build:#2C241B; --tint-adopt:#262233; --tint-code:#1B2A23; --tint-evening:#22272B; --tint-write:#22282C;
+    --link:#8CC4E4; --focus:#8CC4E4;
+}
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior:auto; } }
+body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.55 var(--sans); }
+a { color:var(--link); text-underline-offset:2px; }
+a:focus-visible, input:focus-visible, summary:focus-visible { outline:2px solid var(--focus); outline-offset:2px; border-radius:2px; }
+code { font-size:.9em; background:color-mix(in srgb, var(--rule) 45%, transparent); padding:.05em .3em; border-radius:3px; overflow-wrap:anywhere; }
+.layout { display:grid; grid-template-columns:260px minmax(0,1fr); max-width:1320px; margin:0 auto; }
+nav.side { position:sticky; top:0; height:100vh; overflow-y:auto; padding:28px 18px 40px 22px; border-right:1px solid var(--rule); }
+nav.side .brand { font:700 1.05rem/1.25 var(--serif); margin:0 0 4px; }
+nav.side .sub { color:var(--muted); font-size:.85rem; margin:0 0 18px; }
+nav.side ol { list-style:none; margin:0; padding:0; }
+.nav-week { color:var(--muted); font-size:.8rem; margin:18px 0 6px; }
+nav.side a { display:grid; grid-template-columns:2.2em 1fr auto; gap:6px; align-items:baseline; padding:5px 6px; border-radius:5px; text-decoration:none; color:var(--ink); font-size:.9rem; }
+nav.side a:hover { background:var(--sheet); }
+nav.side a.current { background:var(--sheet); box-shadow:inset 3px 0 0 var(--build); }
+.nnum { font:700 .95rem var(--serif); color:var(--muted); text-align:right; }
+.prog { font-size:.75rem; color:var(--muted); white-space:nowrap; }
+.prog.complete { color:var(--code); font-weight:700; }
+.theme-btn { margin-top:22px; font:inherit; font-size:.85rem; background:none; border:1px solid var(--rule); color:var(--ink); border-radius:5px; padding:5px 10px; cursor:pointer; }
+main { padding:40px 40px 80px; min-width:0; }
+.hero h1 { font:700 clamp(2rem, 4vw, 3rem)/1.1 var(--serif); margin:0 0 14px; max-width:20ch; letter-spacing:-.01em; }
+.hero .intro { max-width:72ch; }
+.hero .intro p { margin:.5em 0; }
+.hero .intro blockquote { margin:1em 0; padding:.6em 1em; border-left:3px solid var(--rule); color:var(--muted); font-size:.92rem; }
+h2 { font:700 1.5rem/1.2 var(--serif); margin:48px 0 12px; }
+.legend { display:flex; flex-wrap:wrap; gap:8px 18px; margin:14px 0 6px; font-size:.88rem; color:var(--muted); }
+.legend span::before { content:""; display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; vertical-align:-1px; background:var(--c); }
+table { border-collapse:collapse; width:100%; }
+.tbl-wrap { overflow-x:auto; background:var(--sheet); border:1px solid var(--rule); border-radius:8px; }
+.glance-tbl td, .glance-tbl th, .md table td, .md table th { padding:8px 12px; border-bottom:1px solid var(--rule); text-align:left; vertical-align:top; }
+.glance-tbl th, .md table th { font-size:.85rem; color:var(--muted); font-weight:700; }
+.g-n { font:700 1.05rem var(--serif); color:var(--muted); width:3em; }
+.md table { background:var(--sheet); border:1px solid var(--rule); }
+.week { margin-top:56px; }
+.week-title { font:700 1.8rem/1.15 var(--serif); margin:0 0 8px; padding-top:8px; border-top:2px solid var(--ink); }
+.week-intro { max-width:72ch; color:var(--muted); margin:0 0 8px; }
+.day { margin:34px 0 0; scroll-margin-top:16px; }
+.day-head { display:flex; gap:16px; align-items:flex-start; margin-bottom:12px; }
+.dnum { font:700 2.6rem/1 var(--serif); color:var(--build); min-width:1.6em; }
+.day-head h3 { font:700 1.3rem/1.25 var(--serif); margin:4px 0 4px; }
+.glance { margin:0; color:var(--muted); font-size:.95rem; max-width:70ch; }
+table.plan th { text-align:left; font-size:.8rem; color:var(--muted); font-weight:700; padding:9px 12px; border-bottom:1px solid var(--rule); }
+table.plan td { padding:12px; vertical-align:top; border-bottom:1px solid var(--rule); }
+table.plan tr:last-child td { border-bottom:0; }
+table.plan tbody tr { background:var(--tint); box-shadow:inset 4px 0 0 var(--c); }
+.k-read { --c:var(--read); --tint:var(--tint-read); }
+.k-build { --c:var(--build); --tint:var(--tint-build); }
+.k-adopt { --c:var(--adopt); --tint:var(--tint-adopt); }
+.k-code { --c:var(--code); --tint:var(--tint-code); }
+.k-evening { --c:var(--evening); --tint:var(--tint-evening); }
+.k-write { --c:var(--write); --tint:var(--tint-write); }
+.c-time { width:4.2em; font-variant-numeric:tabular-nums; color:var(--muted); font-size:.92rem; padding-left:16px !important; }
+.c-block { width:12.5em; }
+.bname { display:block; font-weight:700; color:var(--c); }
+.bnote { display:block; font-size:.85rem; color:var(--muted); margin-top:2px; }
+.chips { display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
+.chip { font-size:.72rem; padding:1px 7px; border-radius:10px; border:1px solid currentColor; line-height:1.5; }
+.chip.mac { color:var(--read); } .chip.gpu { color:var(--code); } .chip.api { color:var(--adopt); }
+.chip.aws, .chip.azure { color:var(--muted); border-style:dashed; }
+.c-items ul { margin:0; padding-left:1.1em; }
+.c-items li { margin:0 0 .4em; max-width:78ch; }
+.c-items li:last-child { margin-bottom:0; }
+.c-done { width:2.4em; text-align:center; }
+.c-done input { width:18px; height:18px; accent-color:var(--code); cursor:pointer; }
+tr.done .c-items, tr.done .c-block { opacity:.55; }
+.lens { margin:12px 0 0; padding:10px 14px; border-left:3px solid var(--ink); max-width:78ch; font-size:.97rem; }
+.lens span { font-weight:700; margin-right:.4em; }
+.sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+details.ref { background:var(--sheet); border:1px solid var(--rule); border-radius:8px; margin:10px 0; padding:0 16px; }
+details.ref > summary { cursor:pointer; font:700 1.05rem var(--serif); padding:12px 0; }
+details.ref[open] > summary { border-bottom:1px solid var(--rule); margin-bottom:10px; }
+details.ref .md-inner, details.ref > *:not(summary) { max-width:100%; }
+details.ref table { display:block; overflow-x:auto; font-size:.93rem; }
+details.ref td, details.ref th { padding:7px 10px; border-bottom:1px solid var(--rule); text-align:left; vertical-align:top; }
+.rhythm table { background:var(--sheet); border:1px solid var(--rule); border-radius:8px; display:block; overflow-x:auto; font-size:.93rem; }
+.rhythm td, .rhythm th { padding:7px 12px; border-bottom:1px solid var(--rule); text-align:left; vertical-align:top; }
+.rhythm p { max-width:72ch; }
+@media (max-width: 900px) {
+  .layout { grid-template-columns:1fr; }
+  nav.side { position:static; height:auto; border-right:0; border-bottom:1px solid var(--rule); }
+  nav.side ol { columns:2; }
+  main { padding:24px 16px 60px; }
+  table.plan thead { display:none; }
+  table.plan, table.plan tbody, table.plan tr, table.plan td { display:block; width:auto; }
+  table.plan tr { position:relative; padding:4px 0; }
+  table.plan td { border:0; padding:6px 14px 6px 18px !important; }
+  .c-time:empty { display:none; }
+  .c-done { position:absolute; top:6px; right:6px; }
+}
+@media print { nav.side { display:none; } .layout { display:block; } details.ref { break-inside:avoid; } }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="side" aria-label="Days">
+  <p class="brand">Agent Engineering Sprint</p>
+  <p class="sub">16 days · tick blocks as you finish them</p>
+  <ol><li class="nav-week">Week 1</li><li><a href="#day-01" data-day="day-01"><span class="nnum">1</span><span class="nttl">The loop, from tokens up</span><span class="prog" aria-hidden="true"></span></a></li><li><a href="#day-02" data-day="day-02"><span class="nnum">2</span><span class="nttl">Tools as the agent–computer interface</span><span class="prog" aria-hidden="true"></span></a></li><li><a href="#day-03" data-day="day-03"><span class="nnum">3</span><span class="nttl">Boundaries: permissions, hooks, guardrails, injection</span><span class="prog" aria-hidden="true"></span></a></li><li><a href="#day-04" data-day="day-04"><span class="nnum">4</span><span class="nttl">Planning, subagents, and the multi-agent debate</span><span class="prog" aria-hidden="true"></span></a></li><li><a href="#day-05" data-day="day-05"><span class="nnum">5</span><span class="nttl">Context engineering + tracing</span><span class="prog" aria-hidden="true"></span></a></li><li><a href="#saturday-buffer" data-day="saturday-buffer"><span class="nnum">Sat</span><span class="nttl">Buffer</span><span class="prog" aria-hidden="true"></span></a></li><li class="nav-week">Week 2</li><li><a href="#day-06" data-day="day-06"><span class="nnum">6</span><span class="nttl">Production RAG I: ingestion, structured extraction, hybrid indexing</span><span class="prog" aria-hidden="true"></span></a></li><li><a href="#day-07" data-day="day-07"><span class="nnum">7</span><span class="nttl">Production RAG II: reranking, citations, guardrails, lifecycle</span><span class="prog" aria-hidden="true"></span></a></li><li><a href="#day-08" data-day="day-08"><span class="nnum">8</span><span class="nttl">MCP I: the protocol by hand</span><span class="prog" aria-hidden="true"></span></a></li><li><a href="#day-09" data-day="day-09"><span class="nnum">9</span><span class="nttl">MCP II: remote, secured, production-shaped</span><span class="prog" aria-hidden="true"></span></a></li><li><a href="#day-10" data-day="day-10"><span class="nnum">10</span><span class="nttl">Memory and persistent tasks</span><span class="prog" aria-hidden="true"></span></a></li><li><a href="#saturday-buffer-eval-prep" data-day="saturday-buffer-eval-prep"><span class="nnum">Sat</span><span class="nttl">Buffer + eval prep</span><span class="prog" aria-hidden="true"></span></a></li><li class="nav-week">Week 3</li><li><a href="#day-11" data-day="day-11"><span class="nnum">11</span><span class="nttl">Evals (the most important day)</span><span class="prog" aria-hidden="true"></span></a></li><li><a href="#day-12" data-day="day-12"><span class="nnum">12</span><span class="nttl">Workflows vs agents; the framework landscape</span><span class="prog" aria-hidden="true"></span></a></li><li><a href="#day-13" data-day="day-13"><span class="nnum">13</span><span class="nttl">Inference internals &amp; unit economics (on your own 5090)</span><span class="prog" aria-hidden="true"></span></a></li><li><a href="#day-14" data-day="day-14"><span class="nnum">14</span><span class="nttl">Security, red-teaming, governance</span><span class="prog" aria-hidden="true"></span></a></li><li><a href="#day-15" data-day="day-15"><span class="nnum">15</span><span class="nttl">Integrate, ship, narrate</span><span class="prog" aria-hidden="true"></span></a></li><li class="nav-week">Final Saturday</li><li><a href="#day-16" data-day="day-16"><span class="nnum">16</span><span class="nttl">Building an AI-driven engineering culture (EM track)</span><span class="prog" aria-hidden="true"></span></a></li></ol>
+  <button class="theme-btn" id="theme" type="button">Switch theme</button>
+</nav>
+<main>
+<header class="hero">
+  <h1>Agent Engineering Sprint</h1>
+  <div class="intro"><p><strong>Goal:</strong> go from "has shipped LLM platforms on Bedrock" to "can build an agent harness from an empty file, prove it works with evals, pick and justify the production tooling, explain the economics, and defend it all to a regulator."</p>
+<p><strong>Shape:</strong> Week 1 builds the harness from scratch and instruments it. Week 2 builds production RAG with modern tools (two days), the MCP protocol by hand (two days), then memory on top of your retrieval stack. Week 3 adds evals, workflows vs agents, inference economics, security and governance, then ships a public capstone. A final Saturday turns it into an <strong>AI-driven engineering culture playbook</strong> for the teams you'll lead.</p>
+<p><strong>Method: build it, then adopt it.</strong> Agent mechanisms are built by hand first, because the harness is where your judgement matters. Commodity infrastructure (search engines, embedding models, parsers) is adopted directly and judged on your own data.</p>
+<p><strong>Local-first:</strong> everything runs on your Mac Studio and RTX 5090 workstation except the frontier model (Anthropic API) and a few optional managed services. AWS is optional; Azure is reference reading only. Each day marks where work runs: <strong>[Mac]</strong>, <strong>[5090]</strong>, <strong>[API]</strong>, <strong>[AWS · optional]</strong>, <strong>[Azure · read]</strong>.</p>
+<p><strong>Throughline capstone:</strong> a <em>Dispute &amp; Ops Agent for a synthetic digital bank</em>. Every day adds one piece to a single repo.</p>
+<blockquote>
+<p><strong>Link note:</strong> links point to the canonical page as of September 2026. Docs sites move; if a deep link 404s, search the exact title on that site. Where an Anthropic engineering post has no stable deep link here, the link goes to the <a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering">Engineering blog index</a>, where it's listed by title.</p>
+</blockquote>
+<hr /></div>
+</header>
+
+<h2>At a glance</h2>
+<div class="tbl-wrap"><table class="glance-tbl"><thead><tr><th>Day</th><th>Focus</th><th>By evening you have</th></tr></thead><tbody><tr><td class="g-n">1</td><td><a href="#day-01">The loop, from tokens up</a></td><td>A working agent loop in under 80 lines, and the chat template that makes tool calls possible</td></tr><tr><td class="g-n">2</td><td><a href="#day-02">Tools as the agent–computer interface</a></td><td>Five tools, parallel calls, and a table showing how much tool descriptions matter</td></tr><tr><td class="g-n">3</td><td><a href="#day-03">Boundaries: permissions, hooks, guardrails, injection</a></td><td>Permission engine, audit log, and measured guardrail results against injection</td></tr><tr><td class="g-n">4</td><td><a href="#day-04">Planning, subagents, and the multi-agent debate</a></td><td>Single-agent vs multi-agent numbers on the same task</td></tr><tr><td class="g-n">5</td><td><a href="#day-05">Context engineering + tracing</a></td><td>Skills, compaction, prompt caching, and tracing into Langfuse</td></tr><tr><td class="g-n">6</td><td><a href="#day-06">Production RAG I: ingestion, structured extraction, hybrid indexing</a></td><td>Parsed, extracted, hybrid-indexed MAS corpus and a hand-labelled golden set</td></tr><tr><td class="g-n">7</td><td><a href="#day-07">Production RAG II: reranking, citations, guardrails, lifecycle</a></td><td>Reranked, cited, entitlement-filtered answers with supersession and deletion proven</td></tr><tr><td class="g-n">8</td><td><a href="#day-08">MCP I: the protocol by hand</a></td><td>An MCP server and client written by hand, passing the Inspector</td></tr><tr><td class="g-n">9</td><td><a href="#day-09">MCP II: remote, secured, production-shaped</a></td><td>MCP over HTTP with scopes and a tool-poisoning defence</td></tr><tr><td class="g-n">10</td><td><a href="#day-10">Memory and persistent tasks</a></td><td>A MemoryStore interface over two memory backends, with a PDPA deletion test</td></tr><tr><td class="g-n">11</td><td><a href="#day-11">Evals (the most important day)</a></td><td><code>make eval</code> prints a pass^k scorecard</td></tr><tr><td class="g-n">12</td><td><a href="#day-12">Workflows vs agents; the framework landscape</a></td><td>The dispute flow built as a workflow and as an agent, plus a decision memo</td></tr><tr><td class="g-n">13</td><td><a href="#day-13">Inference internals &amp; unit economics (on your own 5090)</a></td><td>Your own throughput and cost-per-token numbers, local vs API</td></tr><tr><td class="g-n">14</td><td><a href="#day-14">Security, red-teaming, governance</a></td><td>Red-team results and a two-page governance mapping</td></tr><tr><td class="g-n">15</td><td><a href="#day-15">Integrate, ship, narrate</a></td><td>A published repo, README, demo and blog post</td></tr><tr><td class="g-n">16</td><td><a href="#day-16">Building an AI-driven engineering culture (EM track)</a></td><td>A team plugin, an SDD trial, and a two-page culture playbook</td></tr></tbody></table></div>
+
+<h2>Daily rhythm</h2>
+<div class="legend" aria-label="Block colours">
+  <span style="--c:var(--read)">Reading</span><span style="--c:var(--build)">Building</span><span style="--c:var(--adopt)">Adopting a tool</span>
+  <span style="--c:var(--code)">Code-reading</span><span style="--c:var(--evening)">Optional evening</span><span style="--c:var(--write)">Writing and review</span>
+</div>
+<div class="rhythm"><table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Block</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>08:30–09:00</td>
+<td><strong>Quiz</strong></td>
+<td>Answer 5 questions from yesterday's journal without looking. Anything you miss goes to the top of today.</td>
+</tr>
+<tr>
+<td>09:00–11:30</td>
+<td><strong>Read A</strong></td>
+<td>Concept-first primary sources for today's mechanism.</td>
+</tr>
+<tr>
+<td>11:30–12:15</td>
+<td>Lunch, walk</td>
+<td>Away from the screen.</td>
+</tr>
+<tr>
+<td>12:15–14:30</td>
+<td><strong>Build</strong></td>
+<td>Hand-build the mechanism, plus one experiment that produces a <em>number</em>.</td>
+</tr>
+<tr>
+<td>14:30–15:30</td>
+<td><strong>Adopt</strong></td>
+<td>Swap in the production tool and rerun the experiment. On days with no adopt slot, this hour is <strong>code-reading</strong> a reference repo.</td>
+</tr>
+<tr>
+<td>15:30–15:45</td>
+<td>Break</td>
+<td></td>
+</tr>
+<tr>
+<td>15:45–17:00</td>
+<td><strong>Read B</strong></td>
+<td>One paper or deep post explaining <em>why</em> the mechanism works or fails.</td>
+</tr>
+<tr>
+<td>17:00–17:45</td>
+<td><strong>Journal</strong></td>
+<td>Concept → one diagram → annotated code → the number → tool verdict. Nothing is done until it's in the journal.</td>
+</tr>
+<tr>
+<td>Optional</td>
+<td>Evening</td>
+<td>Videos and optional chapters. Never at the expense of sleep.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Annotation convention:</strong> <code>[SDK]</code> vendor SDK built-ins · <code>[H]</code> your harness logic · <code>[P]</code> protocol-defined behaviour (MCP, OTel) · <code>[T]</code> adopted third-party tools.</p>
+<p><strong>Journal tool verdict</strong> (after every adopt slot): Can it self-host, and where does data physically live? Does it work without its parent framework? What latency does it add per turn? Can its decisions be audited? Did it move <em>your</em> eval?</p>
+<p><strong>Weekends:</strong> Saturday = buffer, weekly quiz, blog draft. Sunday = off.</p></div>
+
+<h2>Before you start</h2>
+<details class="ref"><summary>Environment — who does what</summary><table>
+<thead>
+<tr>
+<th>Machine / service</th>
+<th>Role</th>
+<th>Runs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Mac Studio</strong> [Mac]</td>
+<td>Primary dev box</td>
+<td>Your code, the harness, Claude Code, Docker containers (Postgres + pgvector, OpenSearch, Qdrant, Langfuse, Neo4j/FalkorDB for Graphiti), Docling parsing, open models via <a target="_blank" rel="noopener" href="https://lmstudio.ai">LM Studio</a> (MLX engine, OpenAI-compatible server on <code>:1234</code>), and the <a target="_blank" rel="noopener" href="https://github.com/BerriAI/litellm">LiteLLM</a> proxy on <code>:4000</code> that fronts Claude, vLLM and LM Studio</td>
+</tr>
+<tr>
+<td><strong>RTX 5090 workstation</strong> [5090]</td>
+<td>Local inference server</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/vllm-project/vllm">vLLM</a> serving an open chat model, <a target="_blank" rel="noopener" href="https://huggingface.co/Qwen/Qwen3-Embedding-8B">Qwen3-Embedding</a> and a reranker (<a target="_blank" rel="noopener" href="https://huggingface.co/BAAI/bge-reranker-v2-m3">bge-reranker-v2-m3</a> or <a target="_blank" rel="noopener" href="https://huggingface.co/Qwen/Qwen3-Reranker-4B">Qwen3-Reranker</a>), Llama Guard / Prompt Guard for guardrails, red-team runs against local models</td>
+</tr>
+<tr>
+<td><strong>Anthropic API</strong> [API]</td>
+<td>Frontier agent model</td>
+<td><code>claude-sonnet-5</code> agent, <code>claude-haiku-4-5-20251001</code> judges and bulk work, <code>claude-opus-5</code> for hard comparisons</td>
+</tr>
+<tr>
+<td><strong>Managed APIs (no cloud account needed)</strong> [API]</td>
+<td>Managed comparisons</td>
+<td><a target="_blank" rel="noopener" href="https://docs.voyageai.com/docs/embeddings">Voyage</a> or <a target="_blank" rel="noopener" href="https://docs.cohere.com/docs/embeddings">Cohere</a> embeddings, Cohere Rerank, <a target="_blank" rel="noopener" href="https://docs.smith.langchain.com">LangSmith</a> free tier</td>
+</tr>
+<tr>
+<td><strong>AWS</strong> [AWS · optional]</td>
+<td>Build-vs-buy comparisons only</td>
+<td>Bedrock Guardrails (Day 3), Bedrock Knowledge Bases (Day 7). Skip entirely if you don't open an account; the local equivalents cover the learning.</td>
+</tr>
+<tr>
+<td><strong>Azure</strong> [Azure · read]</td>
+<td>Reference architecture</td>
+<td>Reading only; see the mapping table below</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Connecting them:</strong> run vLLM's OpenAI-compatible server on the 5090 and reach it from the Mac over <a target="_blank" rel="noopener" href="https://tailscale.com">Tailscale</a>. Your harness then treats "local model" and "Claude" as two endpoints behind one interface, which Day 13's gateway formalises.</p>
+<p><strong>Workstation setup:</strong> follow the companion guide <strong><code>workstation/vllm-workstation-setup.md</code></strong> (with <code>docker-compose.yml</code>, <code>.env.example</code> and <code>litellm-config.yaml</code>). It covers the driver, the NVIDIA Container Toolkit, sizing models for 32 GB, binding to Tailscale safely, and testing from the Mac. If vLLM fights you on a given day, use LM Studio for that day rather than losing hours; don't let driver work eat the sprint.</p>
+<h3>Local ↔ AWS ↔ Azure mapping (for Day 7 build-vs-buy and Day 14 governance)</h3>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Local / open (what you build with)</th>
+<th>AWS equivalent</th>
+<th>Azure equivalent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Document parsing</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/docling-project/docling">Docling</a></td>
+<td><a target="_blank" rel="noopener" href="https://aws.amazon.com/textract/">Textract</a></td>
+<td><a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/overview">Document Intelligence</a></td>
+</tr>
+<tr>
+<td>Hybrid search</td>
+<td><a target="_blank" rel="noopener" href="https://opensearch.org/docs/latest/search-plugins/hybrid-search/">OpenSearch</a> in Docker, or <a target="_blank" rel="noopener" href="https://qdrant.tech/documentation/concepts/hybrid-queries/">Qdrant</a>, or <a target="_blank" rel="noopener" href="https://github.com/pgvector/pgvector">pgvector</a> + <a target="_blank" rel="noopener" href="https://github.com/paradedb/paradedb">ParadeDB</a></td>
+<td>Amazon OpenSearch Service</td>
+<td><a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/azure/search/hybrid-search-overview">Azure AI Search hybrid</a> + <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/azure/search/semantic-search-overview">semantic ranker</a></td>
+</tr>
+<tr>
+<td>Managed RAG</td>
+<td>Your Day 6–7 pipeline</td>
+<td><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Bedrock Knowledge Bases</a></td>
+<td><a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/azure/search/search-agentic-retrieval-concept">Azure AI Search agentic retrieval</a></td>
+</tr>
+<tr>
+<td>Guardrails</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/NVIDIA-NeMo/Guardrails">NeMo Guardrails</a> + <a target="_blank" rel="noopener" href="https://github.com/meta-llama/PurpleLlama">Llama Guard / Prompt Guard</a></td>
+<td><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html">Bedrock Guardrails</a></td>
+<td><a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/azure/ai-services/content-safety/concepts/jailbreak-detection">Content Safety Prompt Shields</a> + <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/azure/ai-services/content-safety/concepts/groundedness">groundedness detection</a></td>
+</tr>
+<tr>
+<td>Agent runtime</td>
+<td>Your harness, <a target="_blank" rel="noopener" href="https://github.com/langchain-ai/langgraph">LangGraph</a></td>
+<td>Bedrock AgentCore / Bedrock Agents</td>
+<td><a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/azure/ai-foundry/agents/overview">Foundry Agent Service</a> + <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/agent-framework/overview/">Microsoft Agent Framework</a></td>
+</tr>
+<tr>
+<td>LLM gateway</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/BerriAI/litellm">LiteLLM</a></td>
+<td>Bedrock cross-region inference + API Gateway</td>
+<td><a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/azure/api-management/genai-gateway-capabilities">API Management AI gateway</a></td>
+</tr>
+<tr>
+<td>Tracing</td>
+<td><a target="_blank" rel="noopener" href="https://langfuse.com/self-hosting">Langfuse</a> / <a target="_blank" rel="noopener" href="https://github.com/Arize-ai/phoenix">Phoenix</a></td>
+<td>CloudWatch + X-Ray</td>
+<td>Application Insights (Foundry tracing)</td>
+</tr>
+</tbody>
+</table></details><details class="ref"><summary>Weekend 0 — Setup (≈4h)</summary><ul>
+<li><strong>Mac Studio [Mac]</strong></li>
+<li>Python via <a target="_blank" rel="noopener" href="https://docs.astral.sh/uv/">uv</a>; container runtime via <a target="_blank" rel="noopener" href="https://orbstack.dev">OrbStack</a> or Docker Desktop.</li>
+<li>Repo <code>agent-sprint/</code> with <code>harness/</code>, <code>mcp_bank/</code>, <code>rag/</code>, <code>evals/</code>, <code>adapters/</code>, <code>journal/</code>.</li>
+<li><code>docker compose</code> for Postgres + pgvector, OpenSearch, Qdrant, and <a target="_blank" rel="noopener" href="https://langfuse.com/self-hosting">self-hosted Langfuse</a>.</li>
+<li><a target="_blank" rel="noopener" href="https://lmstudio.ai">LM Studio</a> server running with one small model for quick local tests.</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/BerriAI/litellm">LiteLLM</a> proxy with <code>litellm-config.yaml</code> from the workstation guide.</li>
+<li><strong>5090 workstation [5090]</strong></li>
+<li>Linux, current NVIDIA driver, CUDA 12.8+, Docker + <a target="_blank" rel="noopener" href="https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html">NVIDIA Container Toolkit</a>.</li>
+<li>vLLM chat, embedding and reranker servers via the companion guide (<code>workstation/vllm-workstation-setup.md</code>); confirm the Mac can reach all three and that tool calls come back as structured <code>tool_calls</code>.</li>
+<li><a target="_blank" rel="noopener" href="https://tailscale.com">Tailscale</a> on both machines.</li>
+<li><strong>Accounts [API]:</strong> Anthropic API key with a hard spend limit; <a target="_blank" rel="noopener" href="https://smith.langchain.com">LangSmith</a> free account; Voyage and Cohere API keys (trial tiers are enough). AWS only if you want the optional comparisons.</li>
+<li><strong>Clone the reference repos:</strong></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/learn-claude-code">shareAI-lab/learn-claude-code</a> (root <code>s01</code>–<code>s17</code> track)</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/SWE-agent/mini-swe-agent">SWE-agent/mini-swe-agent</a> · <a target="_blank" rel="noopener" href="https://github.com/huggingface/smolagents">huggingface/smolagents</a> · <a target="_blank" rel="noopener" href="https://github.com/anthropics/claude-cookbooks">anthropics/claude-cookbooks</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/sierra-research/tau-bench">sierra-research/tau-bench</a> · <a target="_blank" rel="noopener" href="https://github.com/openai/openai-agents-python">openai/openai-agents-python</a> · <a target="_blank" rel="noopener" href="https://github.com/anthropics/claude-agent-sdk-python">anthropics/claude-agent-sdk-python</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/openai/codex">openai/codex</a> · <a target="_blank" rel="noopener" href="https://github.com/deepseek-ai/deepseek-harness">deepseek-ai/deepseek-harness</a></li>
+<li><strong>Synthetic bank</strong> in SQLite: <code>customers</code>, <code>accounts</code>, <code>transactions</code> (with a free-text <code>merchant_memo</code> you'll weaponise on Day 3), <code>disputes</code>, <code>policies</code>.</li>
+<li><strong>Dogfood from day zero:</strong> create <code>CLAUDE.md</code> and <a target="_blank" rel="noopener" href="https://agents.md"><code>AGENTS.md</code></a> in the repo. Every time you correct your coding agent twice for the same thing, add a line. By Day 16 that file is first-hand evidence of what a team context file needs.</li>
+<li><strong>Bookmark:</strong> <a target="_blank" rel="noopener" href="https://github.com/Picrew/awesome-agent-harness">Picrew/awesome-agent-harness</a> and <a target="_blank" rel="noopener" href="https://github.com/ai-boost/awesome-harness-engineering">ai-boost/awesome-harness-engineering</a> for lookups.</li>
+<li><strong>Optional primer:</strong> <a target="_blank" rel="noopener" href="https://newsletter.maartengrootendorst.com/p/a-visual-guide-to-llm-agents">A Visual Guide to LLM Agents</a> (Alammar &amp; Grootendorst).</li>
+</ul></details>
+
+<section class="week"><h2 class="week-title">Week 1 — The loop and the harness</h2>
+<article class="day" id="day-01">
+<header class="day-head"><span class="dnum">1</span><div><h3>The loop, from tokens up</h3><p class="glance">By evening: a working agent loop in under 80 lines, and the chat template that makes tool calls possible</p></div></header>
+<div class="tbl-wrap"><table class="plan">
+<thead><tr><th scope="col">Time</th><th scope="col">Block</th><th scope="col">What to do</th><th scope="col"><span class="sr">Done</span>✓</th></tr></thead>
+<tbody><tr class="k-read">
+<td class="c-time">09:00</td>
+<td class="c-block"><span class="bname">Read A</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/building-effective-agents">Building Effective Agents</a> — Anthropic; workflow vs agent taxonomy, the five workflow patterns</li><li><a target="_blank" rel="noopener" href="https://lilianweng.github.io/posts/2023-06-23-agent/">LLM Powered Autonomous Agents</a> — Lilian Weng; planning, memory, tool use</li><li><a target="_blank" rel="noopener" href="https://huyenchip.com/2025/01/07/agents.html">Agents</a> — Chip Huyen</li><li>learn-claude-code: <a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/learn-claude-code">root README</a> + <a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/learn-claude-code/tree/main/s01_agent_loop"><code>s01_agent_loop</code></a></li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-01-0" data-row="day-01-0" aria-label="Mark Read A done"></td>
+</tr><tr class="k-build">
+<td class="c-time">12:15</td>
+<td class="c-block"><span class="bname">Build</span><span class="chips"><span class="chip api">API</span><span class="chip mac">Mac</span></span></td>
+<td class="c-items"><ul><li>Call the <a target="_blank" rel="noopener" href="https://docs.claude.com/en/api/messages">Messages API</a> with tools using raw <code>httpx</code>, no SDK. Print <code>tool_use</code>, <code>stop_reason</code> and <code>tool_result</code> with <code>tool_use_id</code>. Reference: <a target="_blank" rel="noopener" href="https://docs.claude.com/en/docs/agents-and-tools/tool-use/overview">tool use overview</a>.</li><li><strong>nanochat bridge:</strong> load the <a target="_blank" rel="noopener" href="https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct">Qwen2.5-0.5B-Instruct</a> tokenizer and call <code>apply_chat_template(messages, tools=...)</code> (<a target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/en/chat_templating">chat templating docs</a>). Print the rendered string and token IDs, then hand-write the tool-call parser.</li><li>Rewrite the <code>s01</code> loop from memory in under 80 lines.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-01-1" data-row="day-01-1" aria-label="Mark Build done"></td>
+</tr><tr class="k-code">
+<td class="c-time">14:30</td>
+<td class="c-block"><span class="bname">Code-read</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://github.com/SWE-agent/mini-swe-agent">mini-swe-agent</a> — an agent of about 100 lines. List what it omits compared with learn-claude-code.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-01-2" data-row="day-01-2" aria-label="Mark Code-read done"></td>
+</tr><tr class="k-read">
+<td class="c-time">15:45</td>
+<td class="c-block"><span class="bname">Read B</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2210.03629">ReAct</a> (Yao et al., 2022), §1–3</li><li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2302.04761">Toolformer</a> (Schick et al., 2023), intro and method — the <em>model</em> half of "model + harness"</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-01-3" data-row="day-01-3" aria-label="Mark Read B done"></td>
+</tr><tr class="k-evening">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Optional evening</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://www.oreilly.com/library/view/building-applications-with/9781098176495/">Building Applications with AI Agents</a> (Albada, O'Reilly) — opening chapters on agents vs workflows</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-01-4" data-row="day-01-4" aria-label="Mark Optional evening done"></td>
+</tr></tbody></table></div>
+<p class="lens"><span>Leader lens</span> when a vendor says "we built an agent," which half did they build?</p>
+</article>
+<article class="day" id="day-02">
+<header class="day-head"><span class="dnum">2</span><div><h3>Tools as the agent–computer interface</h3><p class="glance">By evening: five tools, parallel calls, and a table showing how much tool descriptions matter</p></div></header>
+<div class="tbl-wrap"><table class="plan">
+<thead><tr><th scope="col">Time</th><th scope="col">Block</th><th scope="col">What to do</th><th scope="col"><span class="sr">Done</span>✓</th></tr></thead>
+<tbody><tr class="k-read">
+<td class="c-time">09:00</td>
+<td class="c-block"><span class="bname">Read A</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/writing-tools-for-agents">Writing Effective Tools for Agents</a> — Anthropic</li><li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2405.15793">SWE-agent</a> — the Agent-Computer Interface section</li><li>learn-claude-code <a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/learn-claude-code/tree/main/s02_tool_use"><code>s02_tool_use</code></a></li><li>Albada, the chapter on tools</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-02-0" data-row="day-02-0" aria-label="Mark Read A done"></td>
+</tr><tr class="k-build">
+<td class="c-time">12:15</td>
+<td class="c-block"><span class="bname">Build</span><span class="chips"><span class="chip api">API</span><span class="chip mac">Mac</span></span></td>
+<td class="c-items"><ul><li>Dispatch map with 5 tools: <code>read_file</code>, <code>write_file</code>, <code>grep</code>, <code>run_sql</code>, <code>http_get</code>. Parallel calls; errors returned as observations.</li><li><strong>Experiment:</strong> 10 tasks × 3 tool-description variants (terse / good / misleading) → success rate and tokens.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-02-1" data-row="day-02-1" aria-label="Mark Build done"></td>
+</tr><tr class="k-adopt">
+<td class="c-time">14:30</td>
+<td class="c-block"><span class="bname">Adopt</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>Structured outputs: <a target="_blank" rel="noopener" href="https://docs.claude.com/en/docs/build-with-claude/structured-outputs">Claude structured outputs</a> with <a target="_blank" rel="noopener" href="https://docs.pydantic.dev">Pydantic</a> models, or <a target="_blank" rel="noopener" href="https://python.useinstructor.com">Instructor</a>. Measure schema-violation rate against your hand-parsed JSON.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-02-2" data-row="day-02-2" aria-label="Mark Adopt done"></td>
+</tr><tr class="k-read">
+<td class="c-time">15:45</td>
+<td class="c-block"><span class="bname">Read B</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2402.01030">CodeAct: Executable Code Actions Elicit Better LLM Agents</a> (Wang et al., 2024)</li><li><a target="_blank" rel="noopener" href="https://docs.claude.com/en/docs/build-with-claude/prompt-caching">Prompt caching</a> docs</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-02-3" data-row="day-02-3" aria-label="Mark Read B done"></td>
+</tr><tr class="k-evening">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Optional evening</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://github.com/huggingface/smolagents">smolagents</a> source · <a target="_blank" rel="noopener" href="https://github.com/anthropics/claude-cookbooks">claude-cookbooks</a> tool-use notebooks</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-02-4" data-row="day-02-4" aria-label="Mark Optional evening done"></td>
+</tr></tbody></table></div>
+<p class="lens"><span>Leader lens</span> tool design is API design for a new kind of consumer. Who owns tool quality in your org?</p>
+</article>
+<article class="day" id="day-03">
+<header class="day-head"><span class="dnum">3</span><div><h3>Boundaries: permissions, hooks, guardrails, injection</h3><p class="glance">By evening: permission engine, audit log, and measured guardrail results against injection</p></div></header>
+<div class="tbl-wrap"><table class="plan">
+<thead><tr><th scope="col">Time</th><th scope="col">Block</th><th scope="col">What to do</th><th scope="col"><span class="sr">Done</span>✓</th></tr></thead>
+<tbody><tr class="k-read">
+<td class="c-time">09:00</td>
+<td class="c-block"><span class="bname">Read A</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>learn-claude-code <a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/learn-claude-code/tree/main/s03_permission"><code>s03_permission</code></a> and <a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/learn-claude-code/tree/main/s04_hooks"><code>s04_hooks</code></a></li><li><a target="_blank" rel="noopener" href="https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/">The Lethal Trifecta</a> — Simon Willison</li><li><a target="_blank" rel="noopener" href="https://genai.owasp.org/llm-top-10/">OWASP Top 10 for LLM Applications 2025</a> — LLM01 (Prompt Injection), LLM06 (Excessive Agency)</li><li><em>Beyond Permission Prompts</em> and <em>Claude Code Auto Mode</em> — both on the <a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering">Anthropic Engineering blog</a></li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-03-0" data-row="day-03-0" aria-label="Mark Read A done"></td>
+</tr><tr class="k-build">
+<td class="c-time">12:15</td>
+<td class="c-block"><span class="bname">Build</span><span class="chips"><span class="chip api">API</span><span class="chip mac">Mac</span></span></td>
+<td class="c-items"><ul><li>Permission engine (allow / deny / ask); <code>PreToolUse</code> / <code>PostToolUse</code> hooks writing an append-only JSONL audit log.</li><li><strong>Attack:</strong> plant instructions in a <code>merchant_memo</code>. Defend with prompt hardening, then hook filtering, then architectural separation. Record which actually holds.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-03-1" data-row="day-03-1" aria-label="Mark Build done"></td>
+</tr><tr class="k-adopt">
+<td class="c-time">14:30</td>
+<td class="c-block"><span class="bname">Adopt</span><span class="chips"><span class="chip gpu">5090</span></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://github.com/NVIDIA-NeMo/Guardrails">NeMo Guardrails</a> (<a target="_blank" rel="noopener" href="https://docs.nvidia.com/nemo/guardrails/">docs</a>) with Llama Guard and Prompt Guard from <a target="_blank" rel="noopener" href="https://github.com/meta-llama/PurpleLlama">PurpleLlama</a> served on the 5090. Rerun the attack suite: attack success rate <em>and</em> added latency per turn.</li><li>Cloud reference: <a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html">Bedrock Guardrails</a> [AWS · optional] · <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/azure/ai-services/content-safety/concepts/jailbreak-detection">Azure Prompt Shields</a> [Azure · read]</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-03-2" data-row="day-03-2" aria-label="Mark Adopt done"></td>
+</tr><tr class="k-read">
+<td class="c-time">15:45</td>
+<td class="c-block"><span class="bname">Read B</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2503.18813">CaMeL: Defeating Prompt Injections by Design</a> (Google DeepMind, 2025)</li><li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2506.08837">Design Patterns for Securing LLM Agents against Prompt Injections</a> (Beurer-Kellner et al., 2025)</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-03-3" data-row="day-03-3" aria-label="Mark Read B done"></td>
+</tr><tr class="k-evening">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Optional evening</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2302.12173">Not What You've Signed Up For</a> (Greshake et al., 2023) — the founding indirect-injection paper</li><li><a target="_blank" rel="noopener" href="https://github.com/luisalima/agentic-security">luisalima/agentic-security</a> — notebooks: vulnerability first, then the defence</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-03-4" data-row="day-03-4" aria-label="Mark Optional evening done"></td>
+</tr></tbody></table></div>
+<p class="lens"><span>Leader lens</span> which actions are irreversible? Those need a hard gate or a human, never just a prompt or a rail.</p>
+</article>
+<article class="day" id="day-04">
+<header class="day-head"><span class="dnum">4</span><div><h3>Planning, subagents, and the multi-agent debate</h3><p class="glance">By evening: single-agent vs multi-agent numbers on the same task</p></div></header>
+<div class="tbl-wrap"><table class="plan">
+<thead><tr><th scope="col">Time</th><th scope="col">Block</th><th scope="col">What to do</th><th scope="col"><span class="sr">Done</span>✓</th></tr></thead>
+<tbody><tr class="k-read">
+<td class="c-time">09:00</td>
+<td class="c-block"><span class="bname">Read A</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>learn-claude-code <a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/learn-claude-code/tree/main/s05_todo_write"><code>s05_todo_write</code></a> and <a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/learn-claude-code/tree/main/s06_subagent"><code>s06_subagent</code></a></li><li><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/multi-agent-research-system">How We Built Our Multi-Agent Research System</a> — Anthropic</li><li><a target="_blank" rel="noopener" href="https://cognition.ai/blog/dont-build-multi-agents">Don't Build Multi-Agents</a> — Cognition (read back-to-back with the Anthropic post; they disagree on purpose)</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-04-0" data-row="day-04-0" aria-label="Mark Read A done"></td>
+</tr><tr class="k-build">
+<td class="c-time">12:15</td>
+<td class="c-block"><span class="bname">Build</span><span class="chips"><span class="chip api">API</span><span class="chip mac">Mac</span></span></td>
+<td class="c-items"><ul><li>TodoWrite tool; subagent with a fresh <code>messages[]</code>.</li><li><strong>Experiment:</strong> single agent vs orchestrator + 3 subagents on one investigation task — tokens, wall time, and quality on a rubric you write first.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-04-1" data-row="day-04-1" aria-label="Mark Build done"></td>
+</tr><tr class="k-code">
+<td class="c-time">14:30</td>
+<td class="c-block"><span class="bname">Code-read</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>Compare the context boundary in <code>s06</code> with Albada's orchestration chapter.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-04-2" data-row="day-04-2" aria-label="Mark Code-read done"></td>
+</tr><tr class="k-read">
+<td class="c-time">15:45</td>
+<td class="c-block"><span class="bname">Read B</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2503.13657">Why Do Multi-Agent LLM Systems Fail?</a> (Cemri et al., 2025) — the MAST failure taxonomy; keep it for Day 11</li><li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2303.11366">Reflexion</a> (Shinn et al., 2023)</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-04-3" data-row="day-04-3" aria-label="Mark Read B done"></td>
+</tr></tbody></table></div>
+<p class="lens"><span>Leader lens</span> multi-agent buys parallelism and isolation for roughly N× tokens. When is that worth it?</p>
+</article>
+<article class="day" id="day-05">
+<header class="day-head"><span class="dnum">5</span><div><h3>Context engineering + tracing</h3><p class="glance">By evening: skills, compaction, prompt caching, and tracing into Langfuse</p></div></header>
+<div class="tbl-wrap"><table class="plan">
+<thead><tr><th scope="col">Time</th><th scope="col">Block</th><th scope="col">What to do</th><th scope="col"><span class="sr">Done</span>✓</th></tr></thead>
+<tbody><tr class="k-read">
+<td class="c-time">09:00</td>
+<td class="c-block"><span class="bname">Read A</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">Effective Context Engineering for AI Agents</a> — Anthropic</li><li><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills">Equipping Agents for the Real World with Agent Skills</a> — Anthropic</li><li>learn-claude-code <a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/learn-claude-code/tree/main/s07_skill_loading"><code>s07_skill_loading</code></a> and <a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/learn-claude-code/tree/main/s08_context_compact"><code>s08_context_compact</code></a></li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-05-0" data-row="day-05-0" aria-label="Mark Read A done"></td>
+</tr><tr class="k-build">
+<td class="c-time">12:15</td>
+<td class="c-block"><span class="bname">Build</span><span class="chips"><span class="chip api">API</span><span class="chip mac">Mac</span></span></td>
+<td class="c-items"><ul><li>Skill loader (catalog → on demand); four-stage compaction.</li><li><strong>Experiment:</strong> a 40-turn task at 3 context budgets, logging prompt-cache hit rate.</li><li><strong>nanochat bridge:</strong> KV bytes per token = <code>2 × n_layers × n_kv_heads × head_dim × bytes</code>.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-05-1" data-row="day-05-1" aria-label="Mark Build done"></td>
+</tr><tr class="k-adopt">
+<td class="c-time">14:30</td>
+<td class="c-block"><span class="bname">Adopt</span><span class="bnote">tracing, from today onward</span><span class="chips"><span class="chip mac">Mac</span></span></td>
+<td class="c-items"><ul><li>Instrument with <a target="_blank" rel="noopener" href="https://opentelemetry.io/docs/specs/semconv/gen-ai/">OpenTelemetry GenAI semantic conventions</a> → <a target="_blank" rel="noopener" href="https://langfuse.com/self-hosting">self-hosted Langfuse</a> (or <a target="_blank" rel="noopener" href="https://github.com/Arize-ai/phoenix">Phoenix</a>); dual-export to <a target="_blank" rel="noopener" href="https://docs.smith.langchain.com">LangSmith</a>. Every run from now on leaves traces you'll mine on Day 11.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-05-2" data-row="day-05-2" aria-label="Mark Adopt done"></td>
+</tr><tr class="k-read">
+<td class="c-time">15:45</td>
+<td class="c-block"><span class="bname">Read B</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2307.03172">Lost in the Middle</a> (Liu et al., 2023)</li><li>Microsoft's <em>Context Engineering for Reliable AI Agents: Lessons from Building Azure SRE Agent</em> — files + <code>grep</code> beat 100+ bespoke tools. Link via the <a target="_blank" rel="noopener" href="https://github.com/ai-boost/awesome-harness-engineering">ai-boost/awesome-harness-engineering</a> list.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-05-3" data-row="day-05-3" aria-label="Mark Read B done"></td>
+</tr><tr class="k-evening">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Optional evening</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://github.com/anthropics/claude-cookbooks">claude-cookbooks</a> prompt-caching notebooks</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-05-4" data-row="day-05-4" aria-label="Mark Optional evening done"></td>
+</tr></tbody></table></div>
+<p class="lens"><span>Leader lens</span> cost per task is set more by context policy than by model choice. Where may traces containing customer data legally live?</p>
+</article>
+<article class="day" id="saturday-buffer">
+<header class="day-head"><span class="dnum">Sat</span><div><h3>Buffer</h3></div></header>
+<div class="tbl-wrap"><table class="plan">
+<thead><tr><th scope="col">Time</th><th scope="col">Block</th><th scope="col">What to do</th><th scope="col"><span class="sr">Done</span>✓</th></tr></thead>
+<tbody><tr class="k-build">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Catch-up</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>finish overruns. Optional: <a target="_blank" rel="noopener" href="https://github.com/e2b-dev/E2B">E2B</a> or a local Docker + <a target="_blank" rel="noopener" href="https://gvisor.dev">gVisor</a> sandbox for shell tools; try escaping your allow-list inside and outside it.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="saturday-buffer-0" data-row="saturday-buffer-0" aria-label="Mark Catch-up done"></td>
+</tr><tr class="k-write">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Quiz</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>Week 1, from the journal.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="saturday-buffer-1" data-row="saturday-buffer-1" aria-label="Mark Quiz done"></td>
+</tr><tr class="k-read">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Prep for Monday</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>re-read your <em>Hands-On LLMs</em> Ch 8 notes; download ~50 public MAS notices and guidelines as PDFs from <a target="_blank" rel="noopener" href="https://www.mas.gov.sg/regulation">mas.gov.sg</a>.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="saturday-buffer-2" data-row="saturday-buffer-2" aria-label="Mark Prep for Monday done"></td>
+</tr><tr class="k-read">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Read</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://applied-llms.org">What We Learned from a Year of Building with LLMs</a> — all three parts.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="saturday-buffer-3" data-row="saturday-buffer-3" aria-label="Mark Read done"></td>
+</tr><tr class="k-write">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Write</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>blog draft #1, <em>"The loop is 30 lines. The harness is everything else."</em></li></ul></td>
+<td class="c-done"><input type="checkbox" id="saturday-buffer-4" data-row="saturday-buffer-4" aria-label="Mark Write done"></td>
+</tr><tr class="k-evening">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Optional</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>a lecture from the <a target="_blank" rel="noopener" href="https://llmagents-learning.org">Berkeley LLM Agents MOOC</a> · <a target="_blank" rel="noopener" href="https://github.com/decodingai-magazine/building-a-coding-agent-from-scratch-course">decodingai-magazine/building-a-coding-agent-from-scratch-course</a> as a second from-scratch take.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="saturday-buffer-5" data-row="saturday-buffer-5" aria-label="Mark Optional done"></td>
+</tr></tbody></table></div>
+
+</article>
+</section><section class="week"><h2 class="week-title">Week 2 — Retrieval, protocols, memory</h2>
+<p class="week-intro">RAG gets two production-focused days with modern tools; the only thing built by hand is the evaluation harness (golden set and retrieval metrics), because it encodes what "correct" means for your documents. MCP gets two days built by hand first, then the SDK. Memory comes last, because it's retrieval over the agent's own history.</p>
+<article class="day" id="day-06">
+<header class="day-head"><span class="dnum">6</span><div><h3>Production RAG I: ingestion, structured extraction, hybrid indexing</h3><p class="glance">By evening: parsed, extracted, hybrid-indexed MAS corpus and a hand-labelled golden set</p></div></header>
+<div class="tbl-wrap"><table class="plan">
+<thead><tr><th scope="col">Time</th><th scope="col">Block</th><th scope="col">What to do</th><th scope="col"><span class="sr">Done</span>✓</th></tr></thead>
+<tbody><tr class="k-read">
+<td class="c-time">09:00</td>
+<td class="c-block"><span class="bname">Read A</span><span class="bnote">concepts, 1.5h</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://www.oreilly.com/library/view/ai-engineering/9781098166298/">AI Engineering</a> (Chip Huyen), <strong>Ch 6</strong>, the RAG half — what BM25's <code>k1</code> and <code>b</code> do, why dense and sparse retrieval fail differently, how Reciprocal Rank Fusion combines them</li><li><a target="_blank" rel="noopener" href="https://www.anthropic.com/news/contextual-retrieval">Introducing Contextual Retrieval</a> — Anthropic</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-06-0" data-row="day-06-0" aria-label="Mark Read A done"></td>
+</tr><tr class="k-read">
+<td class="c-time">10:30</td>
+<td class="c-block"><span class="bname">Read A</span><span class="bnote">tools, 1h</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://docling-project.github.io/docling/">Docling docs</a> — layout-aware parsing: tables, reading order, section hierarchy</li><li><a target="_blank" rel="noopener" href="https://opensearch.org/docs/latest/search-plugins/hybrid-search/">OpenSearch hybrid search</a> — BM25 + k-NN with a normalisation pipeline</li><li>Alternatives: <a target="_blank" rel="noopener" href="https://qdrant.tech/documentation/concepts/hybrid-queries/">Qdrant hybrid queries</a> · <a target="_blank" rel="noopener" href="https://github.com/pgvector/pgvector">pgvector</a> + <a target="_blank" rel="noopener" href="https://github.com/paradedb/paradedb">ParadeDB <code>pg_search</code></a></li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-06-1" data-row="day-06-1" aria-label="Mark Read A done"></td>
+</tr><tr class="k-build">
+<td class="c-time">12:15</td>
+<td class="c-block"><span class="bname">Build</span><span class="chips"><span class="chip mac">Mac</span><span class="chip gpu">5090</span><span class="chip api">API</span></span></td>
+<td class="c-items"><ul><li><strong>Parse</strong> the MAS corpus with Docling [Mac]; compare one table-heavy PDF against <a target="_blank" rel="noopener" href="https://docs.claude.com/en/docs/build-with-claude/pdf-support">Claude's native PDF support</a> [API].</li><li><strong>Structured extraction:</strong> a Pydantic schema per document (issuer, notice number, effective date, applicability, superseded-by, obligations), filled via <a target="_blank" rel="noopener" href="https://docs.claude.com/en/docs/build-with-claude/structured-outputs">structured outputs</a> and validated. Failures go to a review queue, not the index.</li><li><strong>Structure-aware chunks:</strong> split on parsed sections; each chunk carries <code>doc_id</code>, version, section path, page, character offsets, effective date and access level.</li><li><strong>Index</strong> into OpenSearch (Docker on the Mac) with metadata as filterable fields.</li><li><strong>Golden set, by hand:</strong> 30 questions with the correct chunk IDs, plus a ~30-line script for recall@5 and MRR.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-06-2" data-row="day-06-2" aria-label="Mark Build done"></td>
+</tr><tr class="k-adopt">
+<td class="c-time">14:30</td>
+<td class="c-block"><span class="bname">Adopt</span><span class="bnote">embedding shoot-out on your golden set</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>Local [5090]: <a target="_blank" rel="noopener" href="https://huggingface.co/Qwen/Qwen3-Embedding-8B">Qwen3-Embedding</a> or <a target="_blank" rel="noopener" href="https://huggingface.co/BAAI/bge-m3">BGE-M3</a>, served via vLLM or <a target="_blank" rel="noopener" href="https://github.com/huggingface/text-embeddings-inference">text-embeddings-inference</a></li><li>Managed [API]: <a target="_blank" rel="noopener" href="https://docs.voyageai.com/docs/embeddings">Voyage</a> or <a target="_blank" rel="noopener" href="https://docs.cohere.com/docs/embeddings">Cohere Embed</a></li><li>Run BM25-only, dense-only and hybrid; nudge <code>k1</code>/<code>b</code> in OpenSearch to feel what they do.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-06-3" data-row="day-06-3" aria-label="Mark Adopt done"></td>
+</tr><tr class="k-read">
+<td class="c-time">15:45</td>
+<td class="c-block"><span class="bname">Read B</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>Examine every golden-set miss: parsing, chunk boundary, vocabulary mismatch, or a bad question?</li><li>Skim <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2104.08663">BEIR</a> (Thakur et al., 2021) on why BM25 remains a strong baseline.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-06-4" data-row="day-06-4" aria-label="Mark Read B done"></td>
+</tr><tr class="k-evening">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Optional evening</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://hamel.dev/blog/">Stop Saying RAG Is Dead</a> — Hamel Husain</li><li>Parser alternatives: <a target="_blank" rel="noopener" href="https://github.com/Unstructured-IO/unstructured">Unstructured</a> · <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/overview">Azure Document Intelligence</a> [Azure · read] · <a target="_blank" rel="noopener" href="https://aws.amazon.com/textract/">Textract</a> [AWS · optional]</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-06-5" data-row="day-06-5" aria-label="Mark Optional evening done"></td>
+</tr></tbody></table></div>
+<p class="lens"><span>Leader lens</span> most "the LLM hallucinated" incidents are really parsing or retrieval failures. Measure retrieval separately from generation.</p>
+</article>
+<article class="day" id="day-07">
+<header class="day-head"><span class="dnum">7</span><div><h3>Production RAG II: reranking, citations, guardrails, lifecycle</h3><p class="glance">By evening: reranked, cited, entitlement-filtered answers with supersession and deletion proven</p></div></header>
+<div class="tbl-wrap"><table class="plan">
+<thead><tr><th scope="col">Time</th><th scope="col">Block</th><th scope="col">What to do</th><th scope="col"><span class="sr">Done</span>✓</th></tr></thead>
+<tbody><tr class="k-read">
+<td class="c-time">09:00</td>
+<td class="c-block"><span class="bname">Read A</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://docs.claude.com/en/docs/build-with-claude/citations">Citations</a> — Anthropic docs</li><li>NeMo Guardrails <a target="_blank" rel="noopener" href="https://docs.nvidia.com/nemo/guardrails/">docs</a> — retrieval rails</li><li><a target="_blank" rel="noopener" href="https://github.com/microsoft/presidio">Microsoft Presidio</a> — PII detection and redaction</li><li><a target="_blank" rel="noopener" href="https://docs.ragas.io">Ragas</a> — faithfulness, context precision and recall</li><li>Cloud reference: <a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-contextual-grounding-check.html">Bedrock contextual grounding check</a> [AWS · optional] · <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/azure/ai-services/content-safety/concepts/groundedness">Azure groundedness detection</a> [Azure · read]</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-07-0" data-row="day-07-0" aria-label="Mark Read A done"></td>
+</tr><tr class="k-build">
+<td class="c-time">12:15</td>
+<td class="c-block"><span class="bname">Build</span><span class="chips"><span class="chip mac">Mac</span><span class="chip gpu">5090</span><span class="chip api">API</span></span></td>
+<td class="c-items"><ul><li><strong>Rerank</strong> hybrid top 50 → top 5 with <a target="_blank" rel="noopener" href="https://huggingface.co/BAAI/bge-reranker-v2-m3">bge-reranker-v2-m3</a> or <a target="_blank" rel="noopener" href="https://huggingface.co/Qwen/Qwen3-Reranker-4B">Qwen3-Reranker</a> on the 5090; compare with <a target="_blank" rel="noopener" href="https://docs.cohere.com/docs/rerank-overview">Cohere Rerank</a> [API]. Measure recall <em>and</em> latency.</li><li><strong>Contextual retrieval:</strong> LLM-written chunk context vs Voyage's contextual chunk embeddings; compare on the golden set.</li><li><strong>Citations:</strong> pass chunks as documents with the Citations API; map each citation to document, page and section.</li><li><strong>Guardrails:</strong> entitlement filter <em>in the query</em> (prove a restricted chunk never reaches the prompt); Presidio redaction at ingestion; injection scanning of retrieved chunks; a grounding check; an explicit "not found in policy" answer below an evidence threshold.</li><li><strong>Agentic RAG:</strong> expose <code>search_policy(query, filters)</code> as a harness tool with effective-date and issuer filters.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-07-1" data-row="day-07-1" aria-label="Mark Build done"></td>
+</tr><tr class="k-adopt">
+<td class="c-time">14:30</td>
+<td class="c-block"><span class="bname">Adopt</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><strong>Lifecycle:</strong> re-ingest an updated notice and prove the superseded version stops being cited; delete a document and prove it's gone from index and caches (PDPA).</li><li>Score end to end with <a target="_blank" rel="noopener" href="https://docs.ragas.io">Ragas</a>.</li><li><strong>Build vs buy:</strong> <a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Bedrock Knowledge Bases</a> on the same corpus [AWS · optional], <em>or</em> read <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/azure/search/search-agentic-retrieval-concept">Azure AI Search agentic retrieval</a> [Azure · read] and fill in the mapping table.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-07-2" data-row="day-07-2" aria-label="Mark Adopt done"></td>
+</tr><tr class="k-read">
+<td class="c-time">15:45</td>
+<td class="c-block"><span class="bname">Read B</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><em>AI Engineering</em>, <strong>Ch 6</strong>, the agents half</li><li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2310.11511">Self-RAG</a> (Asai et al., 2023), intro</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-07-3" data-row="day-07-3" aria-label="Mark Read B done"></td>
+</tr></tbody></table></div>
+<p class="lens"><span>Leader lens</span> RAG vs long context vs fine-tuning, with your own numbers. Entitlements, supersession and deletion are what auditors test first.</p>
+</article>
+<article class="day" id="day-08">
+<header class="day-head"><span class="dnum">8</span><div><h3>MCP I: the protocol by hand</h3><p class="glance">By evening: an MCP server and client written by hand, passing the Inspector</p></div></header>
+<div class="tbl-wrap"><table class="plan">
+<thead><tr><th scope="col">Time</th><th scope="col">Block</th><th scope="col">What to do</th><th scope="col"><span class="sr">Done</span>✓</th></tr></thead>
+<tbody><tr class="k-read">
+<td class="c-time">09:00</td>
+<td class="c-block"><span class="bname">Read A</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://www.jsonrpc.org/specification">JSON-RPC 2.0 specification</a> — short; requests, responses, notifications, errors</li><li><a target="_blank" rel="noopener" href="https://modelcontextprotocol.io/specification/latest">MCP specification</a> — base protocol, <a target="_blank" rel="noopener" href="https://modelcontextprotocol.io/specification/latest/basic/lifecycle">lifecycle</a>, server features (tools, resources, prompts), stdio in <a target="_blank" rel="noopener" href="https://modelcontextprotocol.io/specification/latest/basic/transports">transports</a></li><li>learn-claude-code <a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/learn-claude-code/tree/main/s14_mcp_plugin"><code>s14_mcp_plugin</code></a></li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-08-0" data-row="day-08-0" aria-label="Mark Read A done"></td>
+</tr><tr class="k-build">
+<td class="c-time">12:15</td>
+<td class="c-block"><span class="bname">Build</span><span class="bnote">no SDK</span><span class="chips"><span class="chip mac">Mac</span></span></td>
+<td class="c-items"><ul><li><strong>Server over stdio</strong> (~150 lines): newline-delimited JSON on stdin; handle <code>initialize</code>, <code>notifications/initialized</code>, <code>tools/list</code> (JSON Schema <code>inputSchema</code>), <code>tools/call</code> (content blocks, <code>isError</code>). Log to <strong>stderr only</strong>. Tools: <code>get_customer</code>, <code>list_transactions</code>.</li><li><strong>Resources:</strong> <code>resources/list</code> and <code>resources/read</code> over your policy corpus.</li><li><strong>Client by hand:</strong> spawn the server, handshake, translate MCP tool schemas into Anthropic tool definitions, route <code>tool_use</code> → <code>tools/call</code>. Your harness is now an MCP host.</li><li><strong>Wire-tap:</strong> log every message; draw the sequence diagram in the journal.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-08-1" data-row="day-08-1" aria-label="Mark Build done"></td>
+</tr><tr class="k-build">
+<td class="c-time">14:30</td>
+<td class="c-block"><span class="bname">Build (cont.)</span><span class="bnote">conformance check</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>Point the <a target="_blank" rel="noopener" href="https://github.com/modelcontextprotocol/inspector">MCP Inspector</a> at your server. If it can list and call your tools, you've implemented the protocol correctly.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-08-2" data-row="day-08-2" aria-label="Mark Build (cont.) done"></td>
+</tr><tr class="k-read">
+<td class="c-time">15:45</td>
+<td class="c-block"><span class="bname">Read B</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>learn-claude-code <a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/learn-claude-code/tree/main/s15_integrated_harness"><code>s15_integrated_harness</code></a></li><li><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/code-execution-with-mcp">Code Execution with MCP</a> and <a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/advanced-tool-use">Advanced Tool Use</a> — Anthropic</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-08-3" data-row="day-08-3" aria-label="Mark Read B done"></td>
+</tr></tbody></table></div>
+<p class="lens"><span>Leader lens</span> capability negotiation and protocol versioning are what let a bank run a catalogue of servers owned by different teams.</p>
+</article>
+<article class="day" id="day-09">
+<header class="day-head"><span class="dnum">9</span><div><h3>MCP II: remote, secured, production-shaped</h3><p class="glance">By evening: MCP over HTTP with scopes and a tool-poisoning defence</p></div></header>
+<div class="tbl-wrap"><table class="plan">
+<thead><tr><th scope="col">Time</th><th scope="col">Block</th><th scope="col">What to do</th><th scope="col"><span class="sr">Done</span>✓</th></tr></thead>
+<tbody><tr class="k-read">
+<td class="c-time">09:00</td>
+<td class="c-block"><span class="bname">Read A</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>MCP spec: <a target="_blank" rel="noopener" href="https://modelcontextprotocol.io/specification/latest/basic/transports">Streamable HTTP transport</a>, <a target="_blank" rel="noopener" href="https://modelcontextprotocol.io/specification/latest/basic/authorization">Authorization</a>, <a target="_blank" rel="noopener" href="https://modelcontextprotocol.io/specification/latest/basic/security_best_practices">Security Best Practices</a></li><li><a target="_blank" rel="noopener" href="https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks">MCP tool poisoning attacks</a> — Invariant Labs</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-09-0" data-row="day-09-0" aria-label="Mark Read A done"></td>
+</tr><tr class="k-build">
+<td class="c-time">12:15</td>
+<td class="c-block"><span class="bname">Build</span><span class="chips"><span class="chip mac">Mac</span></span></td>
+<td class="c-items"><ul><li><strong>Streamable HTTP by hand</strong> (Starlette or FastAPI): POST for JSON-RPC, streamed responses, session header handling.</li><li><strong>Gated write tool:</strong> <code>open_dispute</code>, requiring human approval in your harness.</li><li><strong>Scopes:</strong> bearer tokens with <code>disputes:read</code> / <code>disputes:write</code> checked server-side; walk through the OAuth 2.1 flow on paper.</li><li><strong>Attack:</strong> a malicious second server with instructions hidden in a tool description, and one that changes its description after approval (rug-pull). Defend by pinning a hash of each approved tool definition.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-09-1" data-row="day-09-1" aria-label="Mark Build done"></td>
+</tr><tr class="k-adopt">
+<td class="c-time">14:30</td>
+<td class="c-block"><span class="bname">Adopt</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>Rewrite with <a target="_blank" rel="noopener" href="https://github.com/jlowin/fastmcp">FastMCP</a> or the <a target="_blank" rel="noopener" href="https://github.com/modelcontextprotocol/python-sdk">official Python SDK</a>; count lines against yours.</li><li>Connect to Claude Desktop or Claude Code. Browse <a target="_blank" rel="noopener" href="https://github.com/modelcontextprotocol/servers">reference servers</a>.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-09-2" data-row="day-09-2" aria-label="Mark Adopt done"></td>
+</tr><tr class="k-read">
+<td class="c-time">15:45</td>
+<td class="c-block"><span class="bname">Read B</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://a2a-protocol.org">A2A protocol</a> — agent-to-agent vs agent-to-tool</li><li><a target="_blank" rel="noopener" href="https://github.com/modelcontextprotocol/registry">MCP Registry</a> — how server catalogues are governed</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-09-3" data-row="day-09-3" aria-label="Mark Read B done"></td>
+</tr><tr class="k-evening">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Optional evening</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://www.oreilly.com/library/view/ai-agents-with/9798341639546/">AI Agents with MCP</a> (O'Reilly) — server design and security chapters</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-09-4" data-row="day-09-4" aria-label="Mark Optional evening done"></td>
+</tr></tbody></table></div>
+<p class="lens"><span>Leader lens</span> who approves a new MCP server, pins its version, and owns its scopes? That's your agent platform's governance model in one question.</p>
+</article>
+<article class="day" id="day-10">
+<header class="day-head"><span class="dnum">10</span><div><h3>Memory and persistent tasks</h3><p class="glance">By evening: a MemoryStore interface over two memory backends, with a PDPA deletion test</p></div></header>
+<div class="tbl-wrap"><table class="plan">
+<thead><tr><th scope="col">Time</th><th scope="col">Block</th><th scope="col">What to do</th><th scope="col"><span class="sr">Done</span>✓</th></tr></thead>
+<tbody><tr class="k-read">
+<td class="c-time">09:00</td>
+<td class="c-block"><span class="bname">Read A</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>learn-claude-code <a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/learn-claude-code/tree/main/s09_memory"><code>s09_memory</code></a> and <a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/learn-claude-code/tree/main/s10_task_system"><code>s10_task_system</code></a></li><li><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents">Effective Harnesses for Long-Running Agents</a> — Anthropic</li><li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2310.08560">MemGPT</a> (Packer et al., 2023), §1–3</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-10-0" data-row="day-10-0" aria-label="Mark Read A done"></td>
+</tr><tr class="k-build">
+<td class="c-time">12:15</td>
+<td class="c-block"><span class="bname">Build</span><span class="chips"><span class="chip mac">Mac</span><span class="chip gpu">5090</span></span></td>
+<td class="c-items"><ul><li>Memory: selection → extraction → consolidation, reusing your Day 6 embedding and index setup.</li><li>File-backed task DAG with <code>blockedBy</code>; kill mid-task and prove it resumes.</li><li>Define a <code>MemoryStore</code> interface.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-10-1" data-row="day-10-1" aria-label="Mark Build done"></td>
+</tr><tr class="k-adopt">
+<td class="c-time">14:30</td>
+<td class="c-block"><span class="bname">Adopt</span><span class="bnote">two of these behind <code>MemoryStore</code>, all self-hostable</span><span class="chips"><span class="chip mac">Mac</span></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://github.com/mem0ai/mem0">Mem0</a> · <a target="_blank" rel="noopener" href="https://github.com/getzep/graphiti">Graphiti</a> (Zep's temporal knowledge graph; needs Neo4j or FalkorDB in Docker) · <a target="_blank" rel="noopener" href="https://github.com/letta-ai/letta">Letta</a> · <a target="_blank" rel="noopener" href="https://github.com/langchain-ai/langmem">LangMem</a></li><li>Test a temporal query ("customer changed address last month — which one is current?") and a PDPA "forget this customer" deletion.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-10-2" data-row="day-10-2" aria-label="Mark Adopt done"></td>
+</tr><tr class="k-read">
+<td class="c-time">15:45</td>
+<td class="c-block"><span class="bname">Read B</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2304.03442">Generative Agents</a> (Park et al., 2023) — retrieval by recency, importance, relevance</li><li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2504.19413">Mem0 paper</a> — read critically; vendor benchmarks are contested</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-10-3" data-row="day-10-3" aria-label="Mark Read B done"></td>
+</tr><tr class="k-evening">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Optional evening</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><em>Harness Design for Long-Running Application Development</em> — <a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering">Anthropic Engineering</a></li><li><a target="_blank" rel="noopener" href="https://github.com/microsoft/ai-agents-for-beginners">AI Agents for Beginners</a> — the agent memory lesson</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-10-4" data-row="day-10-4" aria-label="Mark Optional evening done"></td>
+</tr></tbody></table></div>
+<p class="lens"><span>Leader lens</span> memory is data retention. What may the agent remember about a customer under PDPA, and how do you prove deletion?</p>
+</article>
+<article class="day" id="saturday-buffer-eval-prep">
+<header class="day-head"><span class="dnum">Sat</span><div><h3>Buffer + eval prep</h3></div></header>
+<div class="tbl-wrap"><table class="plan">
+<thead><tr><th scope="col">Time</th><th scope="col">Block</th><th scope="col">What to do</th><th scope="col"><span class="sr">Done</span>✓</th></tr></thead>
+<tbody><tr class="k-build">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Catch-up</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>RAG and MCP overruns first; they matter more than anything optional.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="saturday-buffer-eval-prep-0" data-row="saturday-buffer-eval-prep-0" aria-label="Mark Catch-up done"></td>
+</tr><tr class="k-write">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Quiz</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>Week 2 — the JSON-RPC handshake from memory; BM25's <code>k1</code> and <code>b</code> in plain words.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="saturday-buffer-eval-prep-1" data-row="saturday-buffer-eval-prep-1" aria-label="Mark Quiz done"></td>
+</tr><tr class="k-read">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Prep for Monday</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2406.12045">τ-bench paper</a> on pass^k, and code-read <a target="_blank" rel="noopener" href="https://github.com/sierra-research/tau-bench">sierra-research/tau-bench</a> for scenario format and end-state checks.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="saturday-buffer-eval-prep-2" data-row="saturday-buffer-eval-prep-2" aria-label="Mark Prep for Monday done"></td>
+</tr><tr class="k-write">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Write</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>blog draft #2, <em>"Production RAG in a bank: citations, entitlements, and the documents that change under you."</em></li></ul></td>
+<td class="c-done"><input type="checkbox" id="saturday-buffer-eval-prep-3" data-row="saturday-buffer-eval-prep-3" aria-label="Mark Write done"></td>
+</tr><tr class="k-evening">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Optional</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>learn-claude-code <a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/learn-claude-code/tree/main/s11_background_tasks"><code>s11</code></a>, <a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/learn-claude-code/tree/main/s12_cron_scheduler"><code>s12</code></a>, <a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/learn-claude-code/tree/main/s13_agent_teams"><code>s13</code></a> · <a target="_blank" rel="noopener" href="https://github.com/walkinglabs/learn-harness-engineering">walkinglabs/learn-harness-engineering</a> — <em>Frontier Harness Design Breakdowns</em></li></ul></td>
+<td class="c-done"><input type="checkbox" id="saturday-buffer-eval-prep-4" data-row="saturday-buffer-eval-prep-4" aria-label="Mark Optional done"></td>
+</tr></tbody></table></div>
+
+</article>
+</section><section class="week"><h2 class="week-title">Week 3 — Evals, workflows, economics, governance, capstone</h2>
+<article class="day" id="day-11">
+<header class="day-head"><span class="dnum">11</span><div><h3>Evals (the most important day)</h3><p class="glance">By evening: <code>make eval</code> prints a pass^k scorecard</p></div></header>
+<div class="tbl-wrap"><table class="plan">
+<thead><tr><th scope="col">Time</th><th scope="col">Block</th><th scope="col">What to do</th><th scope="col"><span class="sr">Done</span>✓</th></tr></thead>
+<tbody><tr class="k-read">
+<td class="c-time">09:00</td>
+<td class="c-block"><span class="bname">Read A</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>Hamel Husain: <a target="_blank" rel="noopener" href="https://hamel.dev/blog/posts/evals/">Your AI Product Needs Evals</a> · <a target="_blank" rel="noopener" href="https://hamel.dev/blog/posts/field-guide/">A Field Guide to Rapidly Improving AI Products</a> · <a target="_blank" rel="noopener" href="https://hamel.dev/blog/posts/evals-faq/">LLM Evals FAQ</a></li><li><em>Demystifying Evals for AI Agents</em> — <a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering">Anthropic Engineering</a></li><li><em>AI Engineering</em> (Chip Huyen), <strong>Ch 3–4</strong></li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-11-0" data-row="day-11-0" aria-label="Mark Read A done"></td>
+</tr><tr class="k-build">
+<td class="c-time">12:15</td>
+<td class="c-block"><span class="bname">Build</span><span class="chips"><span class="chip mac">Mac</span><span class="chip api">API</span></span></td>
+<td class="c-items"><ul><li>Pull 50 traces from Langfuse (collected since Day 5) → open coding → failure taxonomy, seeded with MAST from Day 4.</li><li>20 τ-bench-style scenarios with expected DB end-state, including RAG questions (reuse the Day 6 golden set) and MCP tool flows.</li><li>Code assertions first, then one LLM judge validated against your labels (TPR/TNR). pass^k with k=4.</li><li><strong>Done when <code>make eval</code> prints a scorecard.</strong></li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-11-1" data-row="day-11-1" aria-label="Mark Build done"></td>
+</tr><tr class="k-adopt">
+<td class="c-time">14:30</td>
+<td class="c-block"><span class="bname">Adopt</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://docs.smith.langchain.com/evaluation">LangSmith evaluation</a> experiments · <a target="_blank" rel="noopener" href="https://inspect.aisi.org.uk">Inspect</a> (UK AISI) as a local alternative</li><li><a target="_blank" rel="noopener" href="https://github.com/hamelsmu/evals-skills">hamelsmu/evals-skills</a> in Claude Code — run its eval-audit against your pipeline</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-11-2" data-row="day-11-2" aria-label="Mark Adopt done"></td>
+</tr><tr class="k-read">
+<td class="c-time">15:45</td>
+<td class="c-block"><span class="bname">Read B</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2306.05685">Judging LLM-as-a-Judge</a> (Zheng et al., 2023)</li><li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2404.12272">Who Validates the Validators?</a> (Shankar et al., 2024)</li><li><em>Quantifying Infrastructure Noise in Agentic Coding Evals</em> — <a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering">Anthropic Engineering</a></li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-11-3" data-row="day-11-3" aria-label="Mark Read B done"></td>
+</tr><tr class="k-evening">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Optional evening</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><em>Evals for AI Engineers</em> (Husain et al., O'Reilly) — see <a target="_blank" rel="noopener" href="https://hamel.dev">hamel.dev</a></li><li><a target="_blank" rel="noopener" href="https://eugeneyan.com/writing/llm-patterns/">Patterns for Building LLM-based Systems &amp; Products</a> — Eugene Yan, evals section</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-11-4" data-row="day-11-4" aria-label="Mark Optional evening done"></td>
+</tr></tbody></table></div>
+<p class="lens"><span>Leader lens</span> no eval, no launch. The eval set <em>is</em> the spec.</p>
+</article>
+<article class="day" id="day-12">
+<header class="day-head"><span class="dnum">12</span><div><h3>Workflows vs agents; the framework landscape</h3><p class="glance">By evening: the dispute flow built as a workflow and as an agent, plus a decision memo</p></div></header>
+<div class="tbl-wrap"><table class="plan">
+<thead><tr><th scope="col">Time</th><th scope="col">Block</th><th scope="col">What to do</th><th scope="col"><span class="sr">Done</span>✓</th></tr></thead>
+<tbody><tr class="k-read">
+<td class="c-time">09:00</td>
+<td class="c-block"><span class="bname">Read A</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>learn-claude-code <a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/learn-claude-code/tree/main/s16_workflow_runtime"><code>s16_workflow_runtime</code></a> and <a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/learn-claude-code/tree/main/s17_goal_loop"><code>s17_goal_loop</code></a></li><li><a target="_blank" rel="noopener" href="https://github.com/langchain-ai/langgraph">LangGraph</a> docs — the persistence, durable execution and interrupts pages</li><li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/agent-framework/overview/">Microsoft Agent Framework overview</a> [Azure · read] + skim the framework and design-pattern lessons of <a target="_blank" rel="noopener" href="https://github.com/microsoft/ai-agents-for-beginners">AI Agents for Beginners</a></li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-12-0" data-row="day-12-0" aria-label="Mark Read A done"></td>
+</tr><tr class="k-build">
+<td class="c-time">12:15</td>
+<td class="c-block"><span class="bname">Build</span><span class="chips"><span class="chip mac">Mac</span><span class="chip api">API</span></span></td>
+<td class="c-items"><ul><li>Card-dispute flow twice: (a) LangGraph workflow with LLM nodes + an interrupt for approval, (b) your free agent. Run the Day 11 suite on both: pass^k, cost, latency, auditability.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-12-1" data-row="day-12-1" aria-label="Mark Build done"></td>
+</tr><tr class="k-adopt">
+<td class="c-time">14:30</td>
+<td class="c-block"><span class="bname">Adopt</span><span class="bnote">30-minute ports of one tool and one flow to two of:</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://docs.claude.com/en/api/agent-sdk/overview">Claude Agent SDK</a> (<a target="_blank" rel="noopener" href="https://github.com/anthropics/claude-agent-sdk-python">Python repo</a>) · <a target="_blank" rel="noopener" href="https://github.com/openai/openai-agents-python">OpenAI Agents SDK</a> · <a target="_blank" rel="noopener" href="https://ai.pydantic.dev">Pydantic AI</a> · <a target="_blank" rel="noopener" href="https://google.github.io/adk-docs/">Google ADK</a></li><li>Read <a target="_blank" rel="noopener" href="https://docs.temporal.io">Temporal</a>'s durable-execution concepts for bank workflows.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-12-2" data-row="day-12-2" aria-label="Mark Adopt done"></td>
+</tr><tr class="k-read">
+<td class="c-time">15:45</td>
+<td class="c-block"><span class="bname">Read B</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2407.01489">Agentless</a> (Xia et al., 2024) — strongest evidence for the workflow side</li><li><a target="_blank" rel="noopener" href="https://github.com/humanlayer/12-factor-agents">12-Factor Agents</a> — HumanLayer</li><li><a target="_blank" rel="noopener" href="https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf">A Practical Guide to Building Agents</a> — OpenAI (PDF)</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-12-3" data-row="day-12-3" aria-label="Mark Read B done"></td>
+</tr><tr class="k-evening">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Optional evening — production harnesses</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://github.com/deepseek-ai/deepseek-harness">deepseek-harness</a> architecture docs · <a target="_blank" rel="noopener" href="https://github.com/openai/codex">openai/codex</a> sandboxing and approval-policy code (Rust)</li><li>Field reports (Anthropic <em>Scaling Managed Agents</em>; Cognition <em>What We Learned Building Cloud Agents</em>; OpenAI <em>Harness Engineering</em>) — linked from the <a target="_blank" rel="noopener" href="https://github.com/Picrew/awesome-agent-harness/wiki">awesome-agent-harness wiki</a></li><li><a target="_blank" rel="noopener" href="https://academy.langchain.com">LangChain Academy</a> — <em>Introduction to LangGraph</em>, persistence and HITL modules</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-12-4" data-row="day-12-4" aria-label="Mark Optional evening — production harnesses done"></td>
+</tr></tbody></table></div>
+<p class="lens"><span>Leader lens</span> one-page memo — when is a regulated flow a workflow, and when is it an agent?</p>
+</article>
+<article class="day" id="day-13">
+<header class="day-head"><span class="dnum">13</span><div><h3>Inference internals &amp; unit economics (on your own 5090)</h3><p class="glance">By evening: your own throughput and cost-per-token numbers, local vs API</p></div></header>
+<div class="tbl-wrap"><table class="plan">
+<thead><tr><th scope="col">Time</th><th scope="col">Block</th><th scope="col">What to do</th><th scope="col"><span class="sr">Done</span>✓</th></tr></thead>
+<tbody><tr class="k-read">
+<td class="c-time">09:00</td>
+<td class="c-block"><span class="bname">Read A</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://kipp.ly/transformer-inference-arithmetic/">Transformer Inference Arithmetic</a> — kipply</li><li><a target="_blank" rel="noopener" href="https://horace.io/brrr_intro.html">Making Deep Learning Go Brrrr</a> — Horace He</li><li><a target="_blank" rel="noopener" href="https://blog.vllm.ai/2023/06/20/vllm.html">vLLM and PagedAttention</a> — vLLM blog</li><li><a target="_blank" rel="noopener" href="https://www.tensoreconomics.com/p/llm-inference-economics-from-first">LLM Inference Economics from First Principles</a></li><li>(These are weeks 1, 2 and 9 of <a target="_blank" rel="noopener" href="https://github.com/patchy631/time-to-first-token">time-to-first-token</a>, compressed.)</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-13-0" data-row="day-13-0" aria-label="Mark Read A done"></td>
+</tr><tr class="k-build">
+<td class="c-time">12:15</td>
+<td class="c-block"><span class="bname">Build</span><span class="bnote">no GPU rental needed</span><span class="chips"><span class="chip gpu">5090</span></span></td>
+<td class="c-items"><ul><li>Serve an 8B–14B model with vLLM, tool calling on. Run <a target="_blank" rel="noopener" href="https://docs.vllm.ai/en/latest/benchmarking/cli/"><code>vllm bench serve</code></a> at a few concurrency levels; watch TTFT, inter-token latency and KV-cache use.</li><li><strong>Cost per million tokens</strong> two ways: your hardware (power draw × your electricity tariff + card amortised over ~3 years) vs the current hourly price of a cloud H100 at the same measured throughput.</li><li>Rerun the Day 11 suite against the local model. That quality gap is the real self-host question.</li><li><strong>LM Studio vs vLLM:</strong> load the same model in LM Studio on the Mac and run the same concurrency sweep through LiteLLM. LM Studio is excellent for one user; watch where vLLM's continuous batching pulls ahead as concurrency rises, and what unified memory lets the Mac hold that 32 GB of VRAM can't.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-13-1" data-row="day-13-1" aria-label="Mark Build done"></td>
+</tr><tr class="k-adopt">
+<td class="c-time">14:30</td>
+<td class="c-block"><span class="bname">Adopt</span><span class="chips"><span class="chip mac">Mac</span></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://github.com/BerriAI/litellm">LiteLLM</a> (or <a target="_blank" rel="noopener" href="https://github.com/Portkey-AI/gateway">Portkey</a>) in front of Claude <em>and</em> your 5090: routing, fallback, per-task token budgets, per-key spend.</li><li>Cloud reference: <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/azure/api-management/genai-gateway-capabilities">Azure API Management AI gateway</a> [Azure · read]</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-13-2" data-row="day-13-2" aria-label="Mark Adopt done"></td>
+</tr><tr class="k-read">
+<td class="c-time">15:45</td>
+<td class="c-block"><span class="bname">Read B</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://blog.character.ai/optimizing-ai-inference-at-character-ai-2/">Optimizing AI Inference at Character.AI</a></li><li><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/a-postmortem-of-three-recent-issues">A Postmortem of Three Recent Issues</a> — Anthropic</li><li><em>AI Engineering</em>, <strong>Ch 9</strong></li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-13-3" data-row="day-13-3" aria-label="Mark Read B done"></td>
+</tr><tr class="k-evening">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Optional evening</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://jax-ml.github.io/scaling-book/">How to Scale Your Model</a> — inference chapters · <a target="_blank" rel="noopener" href="https://cs336.stanford.edu">Stanford CS336</a> Lecture 10 · <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2309.06180">PagedAttention paper</a></li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-13-4" data-row="day-13-4" aria-label="Mark Optional evening done"></td>
+</tr></tbody></table></div>
+<p class="lens"><span>Leader lens</span> self-host vs API — data residency, cost crossover by utilisation, and the quality gap <em>on your own eval</em>.</p>
+</article>
+<article class="day" id="day-14">
+<header class="day-head"><span class="dnum">14</span><div><h3>Security, red-teaming, governance</h3><p class="glance">By evening: red-team results and a two-page governance mapping</p></div></header>
+<div class="tbl-wrap"><table class="plan">
+<thead><tr><th scope="col">Time</th><th scope="col">Block</th><th scope="col">What to do</th><th scope="col"><span class="sr">Done</span>✓</th></tr></thead>
+<tbody><tr class="k-read">
+<td class="c-time">09:00</td>
+<td class="c-block"><span class="bname">Read A</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>IMDA <a target="_blank" rel="noopener" href="https://www.imda.gov.sg/resources/press-releases-factsheets-and-speeches/press-releases/2026/new-model-ai-governance-framework-for-agentic-ai">Model AI Governance Framework for Agentic AI</a> (Jan 2026; updated May 2026)</li><li>CSA <a target="_blank" rel="noopener" href="https://www.csa.gov.sg/resources/publications/securing-agentic-ai-a-discussion-paper/">Securing Agentic AI: A Discussion Paper</a> + the finalised <em>Addendum on Securing Agentic AI</em> (June 2026) in <a target="_blank" rel="noopener" href="https://www.csa.gov.sg/resources/publications/">CSA publications</a></li><li>MAS <a target="_blank" rel="noopener" href="https://www.mas.gov.sg/publications/consultations/2025/consultation-paper-on-guidelines-on-artificial-intelligence-risk-management">Guidelines on AI Risk Management — consultation</a> (check the same page for the final version)</li><li>MAS <a target="_blank" rel="noopener" href="https://www.mas.gov.sg/schemes-and-initiatives/project-mindforge">Project MindForge</a> — AI risk management handbook</li><li>MAS <a target="_blank" rel="noopener" href="https://www.mas.gov.sg/regulation/guidelines/technology-risk-management-guidelines">Technology Risk Management Guidelines</a> — SDLC controls that AI-built systems still sit inside</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-14-0" data-row="day-14-0" aria-label="Mark Read A done"></td>
+</tr><tr class="k-build">
+<td class="c-time">12:15</td>
+<td class="c-block"><span class="bname">Build</span><span class="chips"><span class="chip mac">Mac</span></span></td>
+<td class="c-items"><ul><li>Two-page governance mapping: each harness control → IMDA framework dimension → MAS materiality lens (impact, complexity, reliance). Include the RAG entitlement filter and MCP scopes and pinning.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-14-1" data-row="day-14-1" aria-label="Mark Build done"></td>
+</tr><tr class="k-adopt">
+<td class="c-time">14:30</td>
+<td class="c-block"><span class="bname">Adopt</span><span class="bnote">red-team, all runnable locally</span><span class="chips"><span class="chip mac">Mac</span><span class="chip gpu">5090</span></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://github.com/NVIDIA/garak">garak</a> · <a target="_blank" rel="noopener" href="https://www.promptfoo.dev/docs/red-team/">promptfoo red team</a> · <a target="_blank" rel="noopener" href="https://github.com/aiverify-foundation/moonshot">Moonshot</a> (AI Verify Foundation)</li><li>Attacks: memo injection, <strong>RAG poisoning</strong> (a planted policy document with instructions), <strong>MCP tool poisoning</strong>.</li><li><a target="_blank" rel="noopener" href="https://github.com/ethz-spylab/agentdojo">AgentDojo</a> (<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2406.13352">paper</a>) — its <strong>banking suite</strong>, with your defences at the tool-execution seam; report utility and attack success rate with and without.</li><li>Optional: AgentThreatBench in <a target="_blank" rel="noopener" href="https://github.com/UKGovernmentBEIS/inspect_evals">inspect_evals</a>.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-14-2" data-row="day-14-2" aria-label="Mark Adopt done"></td>
+</tr><tr class="k-read">
+<td class="c-time">15:45</td>
+<td class="c-block"><span class="bname">Read B</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>OWASP <em>Top 10 for Agentic Applications (2026)</em> and <em>Agentic AI — Threats and Mitigations</em> at <a target="_blank" rel="noopener" href="https://genai.owasp.org">genai.owasp.org</a> — map every finding to a category</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-14-3" data-row="day-14-3" aria-label="Mark Read B done"></td>
+</tr><tr class="k-evening">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Optional evening</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><em>AI Engineering</em>, <strong>Ch 10</strong></li><li><strong>Day 16 primer:</strong> Birgitta Böckeler, <a target="_blank" rel="noopener" href="https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html">Understanding Spec-Driven Development: Kiro, spec-kit, and Tessl</a></li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-14-4" data-row="day-14-4" aria-label="Mark Optional evening done"></td>
+</tr></tbody></table></div>
+<p class="lens"><span>Leader lens</span> this document is what a CRO or regulator asks for, and you can now write it from the code up.</p>
+</article>
+<article class="day" id="day-15">
+<header class="day-head"><span class="dnum">15</span><div><h3>Integrate, ship, narrate</h3><p class="glance">By evening: a published repo, README, demo and blog post</p></div></header>
+<div class="tbl-wrap"><table class="plan">
+<thead><tr><th scope="col">Time</th><th scope="col">Block</th><th scope="col">What to do</th><th scope="col"><span class="sr">Done</span>✓</th></tr></thead>
+<tbody><tr class="k-build">
+<td class="c-time">09:00</td>
+<td class="c-block"><span class="bname">Integrate</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>wire the capstone end to end; fix the top three failure categories; decide which adopted tools stay, using your five-question verdicts.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-15-0" data-row="day-15-0" aria-label="Mark Integrate done"></td>
+</tr><tr class="k-write">
+<td class="c-time">12:15</td>
+<td class="c-block"><span class="bname">Write</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>README with architecture diagram, eval scorecard, retrieval metrics, cost table (local vs API), tool verdicts, governance mapping.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-15-1" data-row="day-15-1" aria-label="Mark Write done"></td>
+</tr><tr class="k-write">
+<td class="c-time">14:30</td>
+<td class="c-block"><span class="bname">Record &amp; publish</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>five-minute demo; publish the repo; finish one post for <a target="_blank" rel="noopener" href="https://arunma.com">arunma.com</a>.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-15-2" data-row="day-15-2" aria-label="Mark Record &amp; publish done"></td>
+</tr><tr class="k-write">
+<td class="c-time">16:30</td>
+<td class="c-block"><span class="bname">Retro</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>what clicked, what didn't; write the 90-day follow-on.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-15-3" data-row="day-15-3" aria-label="Mark Retro done"></td>
+</tr><tr class="k-evening">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Evening primer for Day 16</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/claude-code-best-practices">Claude Code: Best Practices for Agentic Coding</a>.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-15-4" data-row="day-15-4" aria-label="Mark Evening primer for Day 16 done"></td>
+</tr></tbody></table></div>
+
+</article>
+</section><section class="week"><h2 class="week-title">Final Saturday — Day 16: Building an AI-driven engineering culture (EM track)</h2>
+<p class="week-intro">A softer day (about 6h), placed last because you can lead this credibly only after building agents yourself. The output is a playbook you could take into your next role on day one.</p>
+<article class="day" id="day-16">
+<header class="day-head"><span class="dnum">16</span><div><h3>Building an AI-driven engineering culture (EM track)</h3><p class="glance">By evening: a team plugin, an SDD trial, and a two-page culture playbook</p></div></header>
+<div class="tbl-wrap"><table class="plan">
+<thead><tr><th scope="col">Time</th><th scope="col">Block</th><th scope="col">What to do</th><th scope="col"><span class="sr">Done</span>✓</th></tr></thead>
+<tbody><tr class="k-read">
+<td class="c-time">09:00</td>
+<td class="c-block"><span class="bname">Read A</span><span class="bnote">the evidence</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>DORA <a target="_blank" rel="noopener" href="https://dora.dev/dora-report-2025/">State of AI-assisted Software Development 2025</a> and the <a target="_blank" rel="noopener" href="https://dora.dev/ai/capabilities-model/report/">DORA AI Capabilities Model</a> — seven capabilities that amplify AI's benefits</li><li>DORA <a target="_blank" rel="noopener" href="https://dora.dev/ai/">ROI of AI-assisted Software Development</a> (2026) — the J-curve and the early productivity dip</li><li>METR, <a target="_blank" rel="noopener" href="https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/">Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity</a> — perceived vs measured speed-up</li><li>Anthropic, <a target="_blank" rel="noopener" href="https://www.anthropic.com/news/how-anthropic-teams-use-claude-code">How Anthropic Teams Use Claude Code</a></li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-16-0" data-row="day-16-0" aria-label="Mark Read A done"></td>
+</tr><tr class="k-read">
+<td class="c-time">10:30</td>
+<td class="c-block"><span class="bname">Read A</span><span class="bnote">the practice</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>Claude Code docs: <a target="_blank" rel="noopener" href="https://docs.claude.com/en/docs/claude-code/skills">skills</a> · <a target="_blank" rel="noopener" href="https://docs.claude.com/en/docs/claude-code/hooks">hooks</a> · <a target="_blank" rel="noopener" href="https://docs.claude.com/en/docs/claude-code/sub-agents">subagents</a> · <a target="_blank" rel="noopener" href="https://docs.claude.com/en/docs/claude-code/plugins">plugins</a> · <a target="_blank" rel="noopener" href="https://docs.claude.com/en/docs/claude-code/plugin-marketplaces">plugin marketplaces</a></li><li><a target="_blank" rel="noopener" href="https://agents.md">AGENTS.md</a> convention</li><li>GitHub, <a target="_blank" rel="noopener" href="https://github.blog/ai-and-ml/generative-ai/spec-driven-development-with-ai-get-started-with-a-new-open-source-toolkit/">Spec-driven development with AI</a> + <a target="_blank" rel="noopener" href="https://github.com/github/spec-kit">github/spec-kit</a></li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-16-1" data-row="day-16-1" aria-label="Mark Read A done"></td>
+</tr><tr class="k-build">
+<td class="c-time">12:15</td>
+<td class="c-block"><span class="bname">Build</span><span class="bnote">team toolkit</span><span class="chips"><span class="chip mac">Mac</span></span></td>
+<td class="c-items"><ul><li><strong>Context file:</strong> turn your sprint-long <code>CLAUDE.md</code> into a template for a bank engineering repo — conventions, test commands, forbidden actions (no customer data in prompts, no secrets, no direct prod access).</li><li><strong>Two team skills</strong> (<code>SKILL.md</code>): e.g. banking PR review (PII in logs, idempotency, audit trail, rollback) and an incident or migration runbook. Structure references: <a target="_blank" rel="noopener" href="https://github.com/anthropics/skills">anthropics/skills</a>, <a target="_blank" rel="noopener" href="https://github.com/hamelsmu/evals-skills">hamelsmu/evals-skills</a>.</li><li><strong>Package a plugin:</strong> the skills + a hook blocking commits with secrets or failing tests + a slash command + your Day 9 MCP server, published to a private marketplace repo. Install it on the 5090 box as a "clean machine" to prove the rollout path.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-16-2" data-row="day-16-2" aria-label="Mark Build done"></td>
+</tr><tr class="k-build">
+<td class="c-time">14:30</td>
+<td class="c-block"><span class="bname">Build</span><span class="bnote">SDD trial</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>Run <a target="_blank" rel="noopener" href="https://github.com/github/spec-kit">Spec Kit</a> end to end on one small capstone feature: constitution → specify → plan → tasks → implement, with EARS-style acceptance criteria. Build a comparable feature without a spec; record time, review effort, rework.</li><li>Optional: <a target="_blank" rel="noopener" href="https://kiro.dev">Kiro</a> if your future stack is AWS-native.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-16-3" data-row="day-16-3" aria-label="Mark Build done"></td>
+</tr><tr class="k-write">
+<td class="c-time">15:45</td>
+<td class="c-block"><span class="bname">Write</span><span class="bnote">the playbook (two pages)</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><strong>Adoption path:</strong> pilot team → champions → paved road (shared plugin marketplace, templates) → org default.</li><li><strong>Guardrails:</strong> which repos and data classes may touch which models and where they're hosted; "you commit it, you own it"; mandatory human review of AI-authored PRs; AI-generated code stays inside <a target="_blank" rel="noopener" href="https://www.mas.gov.sg/regulation/guidelines/technology-risk-management-guidelines">MAS TRM</a> SDLC controls.</li><li><strong>Metrics:</strong> DORA four keys segmented by AI-assisted vs not; change-failure rate and rework on AI PRs; review latency. Explicitly <em>not</em> lines of code or suggestion acceptance rate.</li><li><strong>People:</strong> protecting how juniors learn; office hours and pairing; recognising contributors to the shared marketplace.</li><li><strong>Expectation-setting:</strong> the J-curve conversation with executives.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-16-4" data-row="day-16-4" aria-label="Mark Write done"></td>
+</tr><tr class="k-write">
+<td class="c-time">17:00</td>
+<td class="c-block"><span class="bname">Retro</span><span class="chips"></span></td>
+<td class="c-items"><ul><li>what surprised you in DORA and METR versus your own 16 days.</li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-16-5" data-row="day-16-5" aria-label="Mark Retro done"></td>
+</tr><tr class="k-evening">
+<td class="c-time"></td>
+<td class="c-block"><span class="bname">Optional evening</span><span class="chips"></span></td>
+<td class="c-items"><ul><li><a target="_blank" rel="noopener" href="https://www.thoughtworks.com/radar">Thoughtworks Technology Radar</a> — SDD and AI-coding entries</li><li>SDD alternatives: <a target="_blank" rel="noopener" href="https://github.com/Fission-AI/OpenSpec">OpenSpec</a> · <a target="_blank" rel="noopener" href="https://github.com/bmad-code-org/BMAD-METHOD">BMAD-METHOD</a> · comparison: <a target="_blank" rel="noopener" href="https://github.com/LLM-Coding/Spec-Driven">LLM-Coding/Spec-Driven</a></li></ul></td>
+<td class="c-done"><input type="checkbox" id="day-16-6" data-row="day-16-6" aria-label="Mark Optional evening done"></td>
+</tr></tbody></table></div>
+<p class="lens"><span>Leader lens</span> AI amplifies whatever system it lands in. Fix the platform, CI, tests and review culture first; the tooling rollout is the easy part.</p>
+</article>
+</section>
+
+<h2>Reference</h2>
+<details class="ref"><summary>Capstone spec — Dispute &amp; Ops Agent</summary><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Day</th>
+<th>Built with</th>
+<th>Runs on</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Loop, tools, structured output</td>
+<td>1–2</td>
+<td>Hand-built · Pydantic / Instructor</td>
+<td>Mac + API</td>
+</tr>
+<tr>
+<td>Permissions, hooks, guardrails</td>
+<td>3</td>
+<td>Hand-built · NeMo Guardrails, Llama Guard</td>
+<td>Mac + 5090</td>
+</tr>
+<tr>
+<td>Planning, subagents</td>
+<td>4</td>
+<td>Hand-built</td>
+<td>Mac + API</td>
+</tr>
+<tr>
+<td>Context policy, tracing</td>
+<td>5</td>
+<td>Hand-built · Langfuse, LangSmith</td>
+<td>Mac</td>
+</tr>
+<tr>
+<td>Ingestion, extraction, hybrid index, golden set</td>
+<td>6</td>
+<td>Docling, OpenSearch, Qwen3-Embedding / Voyage / Cohere</td>
+<td>Mac + 5090</td>
+</tr>
+<tr>
+<td>Reranking, citations, guardrails, lifecycle, agentic RAG</td>
+<td>7</td>
+<td>bge-reranker / Cohere Rerank, Citations API, Presidio, Ragas</td>
+<td>Mac + 5090 + API</td>
+</tr>
+<tr>
+<td>MCP over stdio: server, client, resources</td>
+<td>8</td>
+<td>Hand-built · MCP Inspector</td>
+<td>Mac</td>
+</tr>
+<tr>
+<td>MCP over HTTP: sessions, scopes, poisoning defence</td>
+<td>9</td>
+<td>Hand-built · FastMCP / official SDK</td>
+<td>Mac</td>
+</tr>
+<tr>
+<td>Memory, persistent tasks</td>
+<td>10</td>
+<td>Hand-built · Mem0, Graphiti, Letta, LangMem</td>
+<td>Mac</td>
+</tr>
+<tr>
+<td>Evals with pass^k</td>
+<td>11</td>
+<td>Hand-built · LangSmith, Inspect, evals-skills</td>
+<td>Mac + API</td>
+</tr>
+<tr>
+<td>Workflow variant</td>
+<td>12</td>
+<td>LangGraph, Claude Agent SDK, OpenAI Agents SDK</td>
+<td>Mac + API</td>
+</tr>
+<tr>
+<td>Self-hosted model + gateway</td>
+<td>13</td>
+<td>vLLM, LiteLLM</td>
+<td>5090 + Mac</td>
+</tr>
+<tr>
+<td>Red-team + governance</td>
+<td>14</td>
+<td>garak, promptfoo, Moonshot, AgentDojo</td>
+<td>Mac + 5090</td>
+</tr>
+<tr>
+<td>Team toolkit: context file, skills, plugin, SDD</td>
+<td>16</td>
+<td>Claude Code plugins, Spec Kit</td>
+<td>Mac</td>
+</tr>
+</tbody>
+</table>
+<p>A public repo and writeup showing hands-on agent engineering in a regulated setting is direct evidence of depth, not just infrastructure leadership.</p></details><details class="ref"><summary>Verdicts on your four original resources</summary><table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Verdict</th>
+<th>Where it appears</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/learn-claude-code">learn-claude-code</a></td>
+<td><strong>Core.</strong> Backbone of Weeks 1–2. Read its "agents are trained, not coded" stance critically; Day 12 tests it.</td>
+<td>s01–s10 and s14–s17 across Days 1–12; s11–s13 optional</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/patchy631/time-to-first-token">time-to-first-token</a></td>
+<td><strong>Good content, wrong scope for now.</strong></td>
+<td>Compressed into Day 13 on your 5090; resume at 30 min/day afterwards</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/microsoft/ai-agents-for-beginners">AI Agents for Beginners</a></td>
+<td><strong>Low marginal value for you</strong>, but useful for the Azure reference view.</td>
+<td>Optional on Day 10, skim on Day 12</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/deepseek-ai/deepseek-harness">deepseek-harness</a></td>
+<td><strong>Read, don't build on.</strong></td>
+<td>Optional evening on Day 12</td>
+</tr>
+</tbody>
+</table></details><details class="ref"><summary>Budget (rough)</summary><ul>
+<li><strong>Anthropic API:</strong> set a hard limit. Evals and multi-agent experiments dominate spend; route bulk runs and judges to Haiku, and to your 5090 where quality allows.</li>
+<li><strong>Managed APIs:</strong> Voyage, Cohere and LangSmith trial or free tiers should cover the sprint.</li>
+<li><strong>GPU:</strong> none to rent — the 5090 covers Day 13 and local embeddings, rerankers and guardrail models.</li>
+<li><strong>AWS:</strong> optional, only for the Day 3 and Day 7 comparisons.</li>
+</ul></details><details class="ref"><summary>90-day follow-on library</summary><ul>
+<li>Sebastian Raschka, <em>Build a Reasoning Model (From Scratch)</em> (Manning) — the RL post-training behind agentic behaviour; a natural sequel to nanochat, and your 5090 can run its experiments.</li>
+<li>The rest of <a target="_blank" rel="noopener" href="https://github.com/patchy631/time-to-first-token">time-to-first-token</a> at 30 min/day.</li>
+<li><a target="_blank" rel="noopener" href="https://jax-ml.github.io/scaling-book/">How to Scale Your Model</a> — full book.</li>
+<li><a target="_blank" rel="noopener" href="https://llmagents-learning.org">Berkeley LLM Agents MOOC</a>.</li>
+<li>Manning's 2026 agent titles (<a target="_blank" rel="noopener" href="https://www.manning.com/catalog/ai/ai-agents">catalogue</a>) — browse tables of contents first.</li>
+<li>Deliberately deferred: fine-tuning and RL for agents, computer-use and voice agents, cross-organisation A2A systems.</li>
+</ul></details>
+</main>
+</div>
+<script>
+(function() {
+  const KEY = 'agent-sprint-progress-v1';
+  let state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { state = {}; }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
+  const boxes = document.querySelectorAll('input[data-row]');
+  function refresh() {
+    document.querySelectorAll('nav.side a[data-day]').forEach(a => {
+      const id = a.dataset.day;
+      const all = document.querySelectorAll('#' + id + ' input[data-row]');
+      const done = [...all].filter(b => b.checked).length;
+      const p = a.querySelector('.prog');
+      p.textContent = done ? done + '/' + all.length : '';
+      p.classList.toggle('complete', all.length > 0 && done === all.length);
+    });
+  }
+  boxes.forEach(b => {
+    b.checked = !!state[b.dataset.row];
+    b.closest('tr').classList.toggle('done', b.checked);
+    b.addEventListener('change', () => {
+      state[b.dataset.row] = b.checked; save();
+      b.closest('tr').classList.toggle('done', b.checked); refresh();
+    });
+  });
+  refresh();
+  const links = [...document.querySelectorAll('nav.side a[data-day]')];
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) {
+      links.forEach(l => l.classList.toggle('current', l.dataset.day === e.target.id));
+    } });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  document.querySelectorAll('article.day').forEach(s => obs.observe(s));
+  const root = document.documentElement;
+  try { const t = localStorage.getItem('agent-sprint-theme'); if (t) root.dataset.theme = t; } catch (e) {}
+  document.getElementById('theme').addEventListener('click', () => {
+    const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+    try { localStorage.setItem('agent-sprint-theme', root.dataset.theme); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>

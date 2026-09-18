@@ -1,0 +1,68 @@
+# vLLM stack for the RTX 5090 workstation (32 GB VRAM)
+# Three OpenAI-compatible servers sharing one GPU:
+#   :8000  chat model (tool calling on)      -> /v1/chat/completions
+#   :8001  embedding model                   -> /v1/embeddings
+#   :8002  reranker                          -> /v1/rerank
+# Start:  docker compose up -d      Logs: docker compose logs -f chat
+# The gpu-memory-utilization fractions below must sum to < ~0.92.
+
+x-vllm-common: &vllm-common
+  image: vllm/vllm-openai:${VLLM_TAG:-latest}   # pin to a version tag once it works
+  restart: unless-stopped
+  ipc: host
+  environment:
+    - HF_TOKEN=${HF_TOKEN:-}
+    - VLLM_API_KEY=${VLLM_API_KEY}
+  volumes:
+    - ${HF_CACHE:-~/.cache/huggingface}:/root/.cache/huggingface
+    - vllm-cache:/root/.cache/vllm
+  deploy:
+    resources:
+      reservations:
+        devices:
+          - driver: nvidia
+            count: all
+            capabilities: [gpu]
+
+services:
+  chat:
+    <<: *vllm-common
+    container_name: vllm-chat
+    ports:
+      - "${BIND_IP}:8000:8000"          # Tailscale IP only; never 0.0.0.0
+    command: >
+      ${CHAT_MODEL:-Qwen/Qwen3-8B-FP8}
+      --served-model-name qwen3-8b
+      --host 0.0.0.0 --port 8000
+      --gpu-memory-utilization 0.70
+      --max-model-len 32768
+      --enable-auto-tool-choice --tool-call-parser hermes
+      --reasoning-parser qwen3
+      --default-chat-template-kwargs '{"enable_thinking": false}'
+
+  embed:
+    <<: *vllm-common
+    container_name: vllm-embed
+    ports:
+      - "${BIND_IP}:8001:8001"
+    command: >
+      Qwen/Qwen3-Embedding-0.6B
+      --served-model-name qwen3-embed
+      --host 0.0.0.0 --port 8001
+      --runner pooling --convert embed
+      --gpu-memory-utilization 0.10
+
+  rerank:
+    <<: *vllm-common
+    container_name: vllm-rerank
+    ports:
+      - "${BIND_IP}:8002:8002"
+    command: >
+      BAAI/bge-reranker-v2-m3
+      --served-model-name bge-rerank
+      --host 0.0.0.0 --port 8002
+      --runner pooling
+      --gpu-memory-utilization 0.08
+
+volumes:
+  vllm-cache:

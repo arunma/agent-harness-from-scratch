@@ -1,0 +1,48 @@
+# Local services on the Mac Studio (bound to localhost only).
+#   docker compose -f infra/mac/docker-compose.yml up -d
+# Langfuse runs from its own compose file; see infra/mac/README.md.
+# Ports avoid Langfuse's defaults (Postgres 5432, Redis 6379, web 3000).
+
+services:
+  postgres:            # pgvector for the Day 6-7 alternative index and Day 10 memory
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: sprint
+      POSTGRES_PASSWORD: sprint
+      POSTGRES_DB: sprint
+    ports: ["127.0.0.1:5433:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    restart: unless-stopped
+
+  opensearch:          # hybrid BM25 + k-NN search (Days 6-7)
+    image: opensearchproject/opensearch:latest
+    environment:
+      discovery.type: single-node
+      DISABLE_SECURITY_PLUGIN: "true"          # local dev only
+      DISABLE_INSTALL_DEMO_CONFIG: "true"
+      OPENSEARCH_JAVA_OPTS: "-Xms1g -Xmx1g"
+    ulimits:
+      memlock: { soft: -1, hard: -1 }
+      nofile: { soft: 65536, hard: 65536 }
+    ports: ["127.0.0.1:9200:9200"]
+    volumes: [osdata:/usr/share/opensearch/data]
+    restart: unless-stopped
+
+  qdrant:              # alternative vector store (Day 6 comparison)
+    image: qdrant/qdrant:latest
+    ports: ["127.0.0.1:6333:6333"]
+    volumes: [qdrantdata:/qdrant/storage]
+    restart: unless-stopped
+
+  falkordb:            # graph store for Graphiti (Day 10); start only that day:
+    image: falkordb/falkordb:latest   #   docker compose ... --profile memory up -d
+    profiles: ["memory"]
+    ports: ["127.0.0.1:6380:6379"]
+    volumes: [falkordata:/data]
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  osdata:
+  qdrantdata:
+  falkordata:

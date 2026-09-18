@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.env.local
+data/bank.db
+data/corpus/
+.pytest_cache/
+.ruff_cache/
+.DS_Store
+*.db
+traces/
+.ipynb_checkpoints/

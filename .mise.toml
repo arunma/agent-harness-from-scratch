@@ -1,0 +1,20 @@
+# Tool versions + env loading for the sprint.
+# `mise install` grabs everything below; `eval "$(mise activate zsh)"` in your
+# shell rc replaces manually `export`-ing keys before running litellm etc. —
+# mise loads `.env` and puts these tools on PATH automatically per directory.
+
+[tools]
+python = "3.12"
+node = "lts"
+
+"pypi:litellm" = { version = "latest", extras = "proxy" }   # Day 5, 13 — one gateway for every model
+"pypi:garak" = "latest"                                      # Day 14 — LLM vulnerability scanner
+"npm:promptfoo" = "latest"                                   # Day 14 — red-team / eval CLI
+"npm:@modelcontextprotocol/inspector" = "latest"              # Day 8 — MCP Inspector
+
+[env]
+_.file = ".env"
+
+[tasks.litellm]
+description = "Start the LiteLLM gateway on :4000 (Day 5, 13)"
+run = "litellm --config docs/workstation/litellm-config.yaml --port 4000"
