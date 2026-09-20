@@ -11,6 +11,8 @@ This is a **personal, curated learning path** — not original research or a pro
 
 ## Quick start (Mac Studio)
 
+`main` moves forward as each day's work lands, so it won't always match the plan's starting point. `v0.1.0` is the scaffold before any day's code exists — stub files only, each with what to build and nothing more — so check that out if you want the same blank slate.
+
 ```bash
 # 1. Tools
 brew install uv mise       # or: curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -19,6 +21,7 @@ brew install uv mise       # or: curl -LsSf https://astral.sh/uv/install.sh | sh
 # 2. Project
 git clone https://github.com/arunma/agent-harness-from-scratch.git
 cd agent-harness-from-scratch
+git checkout v0.1.0        # optional: the pre-Day-1 scaffold, instead of main's latest
 cp .env.example .env       # fill in keys yourself
 mise trust && mise install # python 3.12, node, litellm, garak, promptfoo, MCP Inspector — see .mise.toml
 uv sync                    # core + dev only; later groups arrive day by day
