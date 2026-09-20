@@ -5,6 +5,10 @@ A three-week, hands-on sprint on building LLM agents for a regulated setting: th
 - **The plan:** open `docs/plan.html` in a browser (tables, links, tick-boxes that remember your progress). `docs/plan.md` is the same plan for Claude Code and editors.
 - **Workstation (RTX 5090) setup:** `docs/workstation/vllm-workstation-setup.md`.
 
+## What this is (and isn't)
+
+This is a **personal, curated learning path** — my reading list and exercise plan for understanding agents from the token level up, not original research or a production framework. The daily structure leans heavily on [shareAI-lab/learn-claude-code](https://github.com/shareAI-lab/learn-claude-code) for the harness build order (`s01_agent_loop` through `s17_goal_loop`), plus a long list of other public repos, papers and vendor engineering blogs credited inline in `docs/plan.md` (mini-swe-agent, SWE-agent, smolagents, tau-bench, and others). All code under `src/agent_sprint/` is my own, written by hand against those references — copy the plan, not the answers.
+
 ## Quick start (Mac Studio)
 
 ```bash
