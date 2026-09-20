@@ -1,4 +1,4 @@
-# agent-sprint
+# agent-harness-from-scratch
 
 A three-week, hands-on sprint on building LLM agents for a regulated setting: the harness from scratch, production RAG, MCP by hand, memory, evals, inference economics, security and governance, and finally an AI-driven engineering culture playbook. The throughline is one capstone: a **Dispute & Ops Agent for a synthetic digital bank**.
 
@@ -7,7 +7,7 @@ A three-week, hands-on sprint on building LLM agents for a regulated setting: th
 
 ## What this is (and isn't)
 
-This is a **personal, curated learning path** — my reading list and exercise plan for understanding agents from the token level up, not original research or a production framework. The daily structure leans heavily on [shareAI-lab/learn-claude-code](https://github.com/shareAI-lab/learn-claude-code) for the harness build order (`s01_agent_loop` through `s17_goal_loop`), plus a long list of other public repos, papers and vendor engineering blogs credited inline in `docs/plan.md` (mini-swe-agent, SWE-agent, smolagents, tau-bench, and others). All code under `src/agent_sprint/` is my own, written by hand against those references — copy the plan, not the answers.
+This is a **personal, curated learning path** — not original research or a production framework. The daily structure follows [shareAI-lab/learn-claude-code](https://github.com/shareAI-lab/learn-claude-code) for the harness build order (`s01_agent_loop` through `s17_goal_loop`); the rest of the reading list is credited inline in `docs/plan.md`. All code under `src/agent_sprint/` is written by hand against those references — copy the plan, not the answers.
 
 ## Quick start (Mac Studio)
 
@@ -17,8 +17,8 @@ brew install uv mise       # or: curl -LsSf https://astral.sh/uv/install.sh | sh
 # Docker (OrbStack or Docker Desktop), LM Studio, Tailscale, Claude Code
 
 # 2. Project
-cd agent-sprint
-git init && git add -A && git commit -m "Scaffold"
+git clone https://github.com/arunma/agent-harness-from-scratch.git
+cd agent-harness-from-scratch
 cp .env.example .env       # fill in keys yourself
 mise trust && mise install # python 3.12, node, litellm, garak, promptfoo, MCP Inspector — see .mise.toml
 uv sync                    # core + dev only; later groups arrive day by day
@@ -90,7 +90,7 @@ CLIs that live outside the venv — LiteLLM proxy, garak, promptfoo, MCP Inspect
 ## Layout
 
 ```
-agent-sprint/
+agent-harness-from-scratch/
 ├── CLAUDE.md / AGENTS.md        zone rules for coding agents
 ├── .mise.toml                   tool versions, .env loading, litellm task
 ├── .claude/                     commands + permissions
