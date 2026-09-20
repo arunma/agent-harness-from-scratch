@@ -7,7 +7,7 @@ WHAT IT MUST DO
 TO BUILD
     [ ] A messages list you own and mutate. Everything the model said stays
         in it verbatim.
-    [ ] One call site, reusing raw_call.py's request function.
+    [ ] One call site, reusing d01_raw_call.py's request function.
     [ ] Branch on stop_reason. tool_use means continue; end_turn means stop.
     [ ] Execute every tool_use block in the turn -- there can be more than
         one -- and return all results in a single user message.
@@ -26,7 +26,7 @@ READ
     Read it, close it, then write this from memory.
 
 LATER DAYS PLUG IN HERE
-    Day 2 replaces inline dispatch with tools.py. Day 3 wraps execution in
+    Day 2 replaces inline dispatch with d02_tools.py. Day 3 wraps execution in
     permissions + hooks. Day 5 wraps the loop in a trace span and a context
     policy. Design those seams now or you will rewrite this four times.
 """

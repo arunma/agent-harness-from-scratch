@@ -12,7 +12,7 @@ TO BUILD
         That is the rug-pull.
     [ ] A cross-server attack: a tool on one server whose description tells
         the model to call a tool on another.
-    [ ] Measure with and without pinning.py.
+    [ ] Measure with and without d09_pinning.py.
 
 DONE WHEN
     Pinning blocks the rug-pull, and you can name the attack it does not

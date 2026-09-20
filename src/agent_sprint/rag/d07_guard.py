@@ -13,7 +13,7 @@ TO BUILD
     [ ] Injection scan of retrieved chunks before they enter the prompt.
         A planted policy document is Day 14's rag_poisoning attack.
     [ ] Grounding check on the generated answer against the retrieved text.
-    [ ] The "not found" threshold shared with answer.py.
+    [ ] The "not found" threshold shared with d07_answer.py.
 
 DONE WHEN
     A test proves a restricted chunk never reaches the prompt -- not that it

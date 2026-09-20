@@ -1,7 +1,7 @@
 """Day 9 · The same server with FastMCP. The comparison, not the lesson.
 
 WHAT IT MUST DO
-    Reimplement stdio_server.py's tools and resources with FastMCP or the
+    Reimplement d08_stdio_server.py's tools and resources with FastMCP or the
     official Python SDK, so you can count what the SDK hides.
 
 TO BUILD

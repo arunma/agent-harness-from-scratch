@@ -12,18 +12,18 @@ One row per control that exists in this repo. No aspirational rows.
 
 | Control | Where it lives | IMDA Agentic AI dimension | MAS materiality lens (impact / complexity / reliance) | Evidence |
 |---|---|---|---|---|
-| Permission engine (allow/deny/ask) | `harness/permissions.py` | | | |
-| Pre/PostToolUse hooks | `harness/hooks.py` | | | |
-| Append-only audit log | `harness/audit.py` | | | |
-| Context policy / data minimisation | `harness/context.py` | | | |
-| Tracing and retention | `harness/tracing.py` | | | |
-| RAG entitlement filter | `rag/guard.py` | | | |
-| PII redaction at ingest | `rag/guard.py` | | | |
-| Supersession and deletion | `rag/lifecycle.py` | | | |
-| MCP scopes | `mcp_bank/http_server.py` | | | |
-| MCP tool pinning | `mcp_bank/pinning.py` | | | |
+| Permission engine (allow/deny/ask) | `harness/d03_permissions.py` | | | |
+| Pre/PostToolUse hooks | `harness/d03_hooks.py` | | | |
+| Append-only audit log | `harness/d03_audit.py` | | | |
+| Context policy / data minimisation | `harness/d05_context.py` | | | |
+| Tracing and retention | `harness/d05_tracing.py` | | | |
+| RAG entitlement filter | `rag/d07_guard.py` | | | |
+| PII redaction at ingest | `rag/d07_guard.py` | | | |
+| Supersession and deletion | `rag/d07_lifecycle.py` | | | |
+| MCP scopes | `mcp_bank/d09_http_server.py` | | | |
+| MCP tool pinning | `mcp_bank/d09_pinning.py` | | | |
 | Human approval on writes | | | | |
-| Eval gate before release | `evals/runner.py` | | | |
+| Eval gate before release | `evals/d11_runner.py` | | | |
 
 **Evidence** means a test, a log line or a scorecard — not a paragraph.
 

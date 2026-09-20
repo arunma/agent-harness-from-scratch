@@ -9,7 +9,7 @@ TO BUILD
     [ ] The flow lives in the prompt as a goal and constraints, not as
         nodes.
     [ ] Same limits, same tracing, same eval harness.
-    [ ] Change exactly one variable between this and dispute_graph.py:
+    [ ] Change exactly one variable between this and d12_dispute_graph.py:
         who decides the order of operations.
 
 DONE WHEN

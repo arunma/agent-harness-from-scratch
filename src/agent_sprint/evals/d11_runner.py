@@ -5,7 +5,7 @@ WHAT IT MUST DO
     whether today's change helped.
 
 TO BUILD
-    [ ] Load scenarios from evals/scenarios/.
+    [ ] Load scenarios from evals/d11_scenarios/.
     [ ] Reset state between runs -- a fresh database from scripts/seed_bank.py,
         fresh memory. A scenario that passes only because the previous one
         ran is worthless.
