@@ -1,7 +1,7 @@
 """Day 12 · The card-dispute flow as a LangGraph workflow.
 
 WHAT IT MUST DO
-    Run the same business flow as d12_dispute_agent.py, but with the control
+    Run the same business flow as d12_2_dispute_agent.py, but with the control
     flow written by you rather than decided by the model each turn.
 
 TO BUILD

@@ -8,7 +8,7 @@ TO BUILD
     [ ] Pass chunks as documents to the Citations API rather than pasting
         them into the prompt.
     [ ] Map each returned citation back to doc_id, version, page, section
-        path -- the metadata d06_chunk.py attached.
+        path -- the metadata d06_3_chunk.py attached.
     [ ] Render citations in a form a compliance officer would accept.
     [ ] An evidence threshold: below it, answer "not found in policy". An
         agent that always answers is worse than one that sometimes declines.

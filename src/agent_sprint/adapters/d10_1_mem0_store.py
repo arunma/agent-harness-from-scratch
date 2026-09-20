@@ -1,7 +1,7 @@
 """Day 10 · Mem0 behind your MemoryStore interface.
 
 WHAT IT MUST DO
-    Implement memory/d10_store.py's interface with Mem0, changing nothing about
+    Implement memory/d10_1_store.py's interface with Mem0, changing nothing about
     how the harness calls it.
 
 TO BUILD

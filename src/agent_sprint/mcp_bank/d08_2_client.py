@@ -2,10 +2,10 @@
 
 WHAT IT MUST DO
     Spawn the server, complete the handshake, and make its tools
-    indistinguishable from native tools to d01_loop.py.
+    indistinguishable from native tools to d01_3_loop.py.
 
 TO BUILD
-    [ ] Spawn d08_stdio_server.py as a subprocess; own its stdin/stdout, and
+    [ ] Spawn d08_1_stdio_server.py as a subprocess; own its stdin/stdout, and
         surface its stderr somewhere you will actually read.
     [ ] Handshake: initialize -> read result -> send notifications/initialized.
     [ ] Request ids you generate and match responses against. Do not assume

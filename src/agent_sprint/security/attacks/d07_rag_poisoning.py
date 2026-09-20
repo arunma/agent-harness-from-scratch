@@ -2,7 +2,7 @@
 
 WHAT IT MUST DO
     Get a malicious document through ingestion, into the index, and into a
-    retrieved chunk -- then see whether d07_guard.py catches it.
+    retrieved chunk -- then see whether d07_3_guard.py catches it.
 
 TO BUILD
     [ ] A document that looks like a MAS notice and reads plausibly.
@@ -13,7 +13,7 @@ TO BUILD
         own golden set.
     [ ] Measure at three points: does it get indexed, does it get retrieved,
         does the model obey it.
-    [ ] Run with and without d07_guard.py's injection scan.
+    [ ] Run with and without d07_3_guard.py's injection scan.
 
 DONE WHEN
     The guard catches it, or you know exactly why it does not -- and which

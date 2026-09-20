@@ -7,7 +7,7 @@ WHAT IT MUST DO
 TO BUILD
     [ ] A messages list you own and mutate. Everything the model said stays
         in it verbatim.
-    [ ] One call site, reusing d01_raw_call.py's request function.
+    [ ] One call site, reusing d01_1_raw_call.py's request function.
     [ ] Branch on stop_reason. tool_use means continue; end_turn means stop.
     [ ] Execute every tool_use block in the turn -- there can be more than
         one -- and return all results in a single user message.

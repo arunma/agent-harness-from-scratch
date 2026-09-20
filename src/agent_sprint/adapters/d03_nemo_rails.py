@@ -1,7 +1,7 @@
 """Day 3 · NeMo Guardrails behind your interface.
 
 WHAT IT MUST DO
-    Sit at the same seam as d03_hooks.py, so the Day 3 attack suite can run
+    Sit at the same seam as d03_2_hooks.py, so the Day 3 attack suite can run
     with your defence, theirs, or both.
 
 TO BUILD

@@ -2,7 +2,7 @@
 
 WHAT IT MUST DO
     Own the tools, their schemas, their dispatch and their failure modes, so
-    d01_loop.py never knows a tool's name.
+    d01_3_loop.py never knows a tool's name.
 
 TO BUILD
     [ ] Five tools: read_file, write_file, grep, run_sql, http_get.
