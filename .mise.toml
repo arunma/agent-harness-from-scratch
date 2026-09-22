@@ -10,7 +10,8 @@ node = "lts"
 "pypi:litellm" = { version = "latest", extras = "proxy" }   # Day 5, 13 — one gateway for every model
 "pypi:garak" = "latest"                                      # Day 14 — LLM vulnerability scanner
 "npm:promptfoo" = "latest"                                   # Day 14 — red-team / eval CLI
-"npm:@modelcontextprotocol/inspector" = "latest"              # Day 8 — MCP Inspector
+#"npm:@modelcontextprotocol/inspector" = "latest"              # Day 8 — MCP Inspector
+"npm:@modelcontextprotocol/inspector" = { version = "latest", trust_policy_excludes = ["pino@9.14.0"] }
 
 [env]
 _.file = ".env"
