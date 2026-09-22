@@ -15,6 +15,11 @@ TO BUILD
         schema before the call.
     [ ] Parallel execution when a turn asks for several tools; results keyed
         by tool_use_id, not ordered by completion.
+    [ ] Partition before you parallelise: each tool declares whether it is
+        concurrency-safe. Read-only tools (read_file, grep, http_get) run in
+        one batch; anything that writes or mutates state runs serially, in
+        the order the model asked for it. Two writes to the same file in
+        "parallel" is a bug you only see once, in production.
     [ ] Every failure becomes an observation the model can read: unknown
         tool, bad arguments, exception, timeout.
     [ ] Bound the blast radius today, even though Day 3 formalises it:
@@ -33,4 +38,8 @@ DONE WHEN
 READ
     https://www.anthropic.com/engineering/writing-tools-for-agents
     https://arxiv.org/abs/2405.15793  (SWE-agent, the ACI section)
+    https://github.com/alejandrobalderas/claude-code-from-source
+        book/ch07-concurrency.md -- the partition algorithm and streaming
+        executor; book/ch06-tools.md for the execution pipeline and result
+        budgeting.
 """

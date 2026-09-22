@@ -7,7 +7,7 @@ A three-week, hands-on sprint on building LLM agents for a regulated setting: th
 
 ## What this is (and isn't)
 
-This is a **personal, curated learning path** — not original research or a production framework. The daily structure follows [shareAI-lab/learn-claude-code](https://github.com/shareAI-lab/learn-claude-code) for the harness build order (`s01_agent_loop` through `s17_goal_loop`); the rest of the reading list is credited inline in `docs/plan.md`. All code under `src/agent_sprint/` is written by hand against those references — copy the plan, not the answers.
+This is a **personal, curated learning path** — not original research or a production framework. The daily structure follows [shareAI-lab/learn-claude-code](https://github.com/shareAI-lab/learn-claude-code) for the harness build order (`s01_agent_loop` through `s17_goal_loop`), with [alejandrobalderas/claude-code-from-source](https://github.com/alejandrobalderas/claude-code-from-source) as a second reference view — one production harness described chapter by chapter, read rather than run. The rest of the reading list is credited inline in `docs/plan.md`. All code under `src/agent_sprint/` is written by hand against those references — copy the plan, not the answers.
 
 ## Quick start (Mac Studio)
 

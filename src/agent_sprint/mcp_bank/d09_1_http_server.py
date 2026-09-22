@@ -24,4 +24,8 @@ DONE WHEN
 READ
     https://modelcontextprotocol.io/specification/latest/basic/authorization
     https://modelcontextprotocol.io/specification/latest/basic/security_best_practices
+    https://github.com/alejandrobalderas/claude-code-from-source
+        book/ch15-mcp.md -- the host side of what you are serving: transport
+        taxonomy, OAuth discovery chain, connection states, session-expiry
+        detection. The parts the spec leaves to the implementer.
 """

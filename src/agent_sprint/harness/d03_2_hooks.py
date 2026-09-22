@@ -26,4 +26,8 @@ WATCH OUT
 
 READ
     https://github.com/shareAI-lab/learn-claude-code/tree/main/s04_hooks
+    https://github.com/alejandrobalderas/claude-code-from-source
+        book/ch12-extensibility.md, the hooks half -- lifecycle events, hook
+        sources and precedence, and exit-code semantics for hooks that are
+        subprocesses rather than in-process callables.
 """

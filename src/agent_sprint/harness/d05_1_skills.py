@@ -21,4 +21,8 @@ DONE WHEN
 READ
     https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills
     https://github.com/shareAI-lab/learn-claude-code/tree/main/s07_skill_loading
+    https://github.com/alejandrobalderas/claude-code-from-source
+        book/ch12-extensibility.md, the skills half -- two-phase loading, the
+        frontmatter contract, and why a skill body from an untrusted source
+        is a security boundary.
 """

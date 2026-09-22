@@ -24,6 +24,10 @@ DONE WHEN
 READ
     https://github.com/shareAI-lab/learn-claude-code/tree/main/s01_agent_loop
     Read it, close it, then write this from memory.
+    https://github.com/alejandrobalderas/claude-code-from-source
+        book/ch05-agent-loop.md -- the same loop as shipped: async generator,
+        two-layer entry point, immutable state transitions. Read AFTER yours
+        works, then list what you left out.
 
 LATER DAYS PLUG IN HERE
     Day 2 replaces inline dispatch with d02_tools.py. Day 3 wraps execution in

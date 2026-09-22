@@ -16,6 +16,10 @@ TO BUILD
     [ ] Retrieval scored on more than similarity -- recency and importance
         matter (Generative Agents).
     [ ] forget(subject) that actually removes, across every derived store.
+    [ ] Baseline to beat: the same four operations over Markdown files with
+        frontmatter and one always-loaded index file -- no embeddings at
+        all. If your vector version doesn't win on the temporal query, the
+        embeddings are decoration.
 
 DONE WHEN
     A temporal query ("address changed last month -- which is current?") and
@@ -25,4 +29,8 @@ READ
     https://arxiv.org/abs/2310.08560   (MemGPT)
     https://arxiv.org/abs/2304.03442   (Generative Agents: recency,
                                         importance, relevance)
+    https://github.com/alejandrobalderas/claude-code-from-source
+        book/ch11-memory.md -- the file-based baseline above as one harness
+        actually ships it: four-type taxonomy, write and recall paths,
+        staleness, MEMORY.md as the always-loaded index.
 """

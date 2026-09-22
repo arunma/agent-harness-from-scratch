@@ -30,4 +30,8 @@ READ
     https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
     https://arxiv.org/abs/2307.03172  (Lost in the Middle)
     https://github.com/shareAI-lab/learn-claude-code/tree/main/s08_context_compact
+    https://github.com/alejandrobalderas/claude-code-from-source
+        book/ch05-agent-loop.md, the context-management section -- one
+        shipped harness's layers and the trigger for each;
+        book/ch09-fork-agents.md on keeping the cached prefix intact.
 """
