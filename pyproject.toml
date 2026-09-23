@@ -18,7 +18,15 @@ dependencies = [
 dev = ["pytest", "ruff", "ipykernel"]
 
 # Install progressively as the sprint reaches each day:  uv sync --group <name>
-w1-tokens = ["transformers", "tokenizers", "jinja2"]                     # Day 1
+w1-tokens = [
+    "transformers",
+    "tokenizers",
+    "jinja2",
+    "torch>=2.14.0",
+    "torchvision>=0.29.0",
+    "torchaudio>=2.11.0",
+    "accelerate>=1.15.0",
+]                     # Day 1
 w1-structured = ["instructor"]                                          # Day 2
 w1-guardrails = ["nemoguardrails"]                                      # Day 3
 w1-tracing = [                                                          # Day 5

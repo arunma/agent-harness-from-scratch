@@ -34,3 +34,116 @@ LATER DAYS PLUG IN HERE
     permissions + hooks. Day 5 wraps the loop in a trace span and a context
     policy. Design those seams now or you will rewrite this four times.
 """
+import os
+from unittest import result
+from anthropic import Anthropic
+import random
+from agent_sprint.config import settings
+
+MODEL = "claude-haiku-4-5-20251001"
+TOOLS = [
+        {
+            "name": "get_balance",
+            "description": "Returns the current balance for an account",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "account_id": {
+                        "type": "string",
+                        "description": "The account id of the account for which the balance is required"
+                    }
+                },
+                "required": ["account_id"]
+            }
+        }
+    ]
+
+client = Anthropic(api_key=settings.anthropic_api_key)
+
+# Tools
+def get_balance(account_id: str):
+    return str(random.randint(100, 1000))
+
+# Main
+def main():
+    #Initial query
+    history = [
+        {
+            "role": "user",
+            "content": "What is the current balance for my account 1234567890?"
+        }
+    ]
+    agent_loop(history)
+    final_response = history[-1]["content"]
+    print("\033[32m-------------------------------- Final response --------------------------------", final_response, "\033[0m")
+    print("Agent loop completed")
+
+def agent_loop(messages: list):
+    while True:
+        response = client.messages.create(model=MODEL, tools=TOOLS, messages=messages, max_tokens=500)
+        messages.append({"role": "assistant", "content": response.content})
+
+        tool_calls=[tc_content for tc_content in response.content if tc_content.type=="tool_use"]
+
+        if not tool_calls:
+            return
+        
+        results=[]
+        for tc in tool_calls:
+            print("\033[32m-------------------------------- Tool call --------------------------------", tc, "\033[0m")
+            if tc.name=="get_balance":
+                account_id=tc.input["account_id"]
+                balance = get_balance(account_id)
+                results.append({
+                    "type": "tool_result",
+                    "tool_use_id": tc.id,
+                    "content": str(balance)
+                })
+        messages.append({
+            "role": "user",
+            "content": results
+        })
+
+
+if __name__ == "__main__":
+    main()
+
+
+# Reference - Anthropic tool use response
+'''
+    {
+    "model": "claude-haiku-4-5-20251001",
+    "id": "msg_011CfEpzie23bRus4i9VcGcJ",
+    "type": "message",
+    "role": "assistant",
+    "content": [
+        {
+            "type": "tool_use",
+            "id": "toolu_017AwHf45suSEpdMMNb4aASA",
+            "name": "get_balance",
+            "input": {
+                "account_id": "1234567890"
+            },
+            "caller": {
+                "type": "direct"
+            }
+        }
+    ],
+    "container": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "stop_details": null,
+    "usage": {
+        "input_tokens": 593,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 59,
+        "service_tier": "standard",
+        "inference_geo": "not_available"
+    }
+    }
+    '''
