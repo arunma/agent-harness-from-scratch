@@ -99,10 +99,13 @@ def agent_loop(messages: list):
                     "tool_use_id": tc.id,
                     "content": str(balance)
                 })
-        messages.append({
-            "role": "user",
-            "content": results
-        })
+        if results:
+            messages.append({
+                "role": "user",
+                "content": results
+            })
+        else:
+            return #unrecognized tool calls
 
 
 if __name__ == "__main__":
